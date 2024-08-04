@@ -6,6 +6,7 @@ import localFont from 'next/font/local'
 import NavBar from './NavBar'
 import AuthProvider from './auth/Provider'
 
+
 const genyo = localFont({ src: '../public/fonts/GenYoGothicTW-M-01.ttf', variable: '--font-genyo' })                                         
 
 export const metadata: Metadata = {

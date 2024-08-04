@@ -5,7 +5,6 @@ import Link from 'next/link'
 
 const NavBar = () => {
   const { status, data: session } = useSession();
-
   return (
     <div className=' bg-slate-200 p-5 space-x-3 hidden sm:block'>
       <Link href="/" className='mr-5'>Next.js</Link>

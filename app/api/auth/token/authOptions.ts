@@ -3,17 +3,12 @@ import GitHubProvider from "next-auth/providers/github";
 import type { NextAuthOptions } from "next-auth";
 import bcrypt from "bcrypt";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { FirebaseAdapter } from "@next-auth/firebase-adapter"
-
-import firebase from "firebase/app"
-import "firebase/firestore"
-
-const firestore = (
-  firebase.apps[0] ?? firebase.initializeApp(/* your config */)
-).firestore()
+import { FirebaseAdapter } from "@next-auth/firebase-adapter";
+import { db } from "@/lib/firebase";
+import { getDocs, collection } from "firebase/firestore";
 
 const authOptions: NextAuthOptions = {
-  adapter: ,
+  adapter: FirebaseAdapter(db),
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -26,18 +21,23 @@ const authOptions: NextAuthOptions = {
         },
       },
       async authorize(credentials, req) {
-        if (!credentials?.email || !credentials?.password) return null;
-        const user = await {}?.user.findUnique({
-          where: { email: credentials.email },
+        if (!credentials?.email || !credentials?.password) {
+          return null;
+        }
+
+        const users = await getDocs(collection(db, "users"));
+        const user = users.docs.find((doc) => {
+          return doc.data().email === credentials.email;
         });
-        if (!user) return null;
+        if (!user) {
+          return null;
+        }
         const passwordMatch = await bcrypt.compare(
           credentials.password,
-          user.hashedPassword!
+          user.data().password
         );
         return passwordMatch ? user : null;
       },
-      
     }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
