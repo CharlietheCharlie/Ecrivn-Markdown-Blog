@@ -14,7 +14,6 @@ const UserPage = async ({ searchParams: { sortOrder } }: Props) => {
       <Suspense fallback={<span className='loading loading-spinner loading-sm'></span>}>
         <UserTable sortOrder={sortOrder} />
       </Suspense >
-
     </>
   )
 }

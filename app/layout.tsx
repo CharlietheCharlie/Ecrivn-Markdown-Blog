@@ -1,11 +1,8 @@
-
-
 import './globals.css'
 import type { Metadata } from 'next'
+import { SessionProvider } from "next-auth/react"
 import localFont from 'next/font/local'
 import NavBar from './NavBar'
-import AuthProvider from './auth/Provider'
-
 
 const genyo = localFont({ src: '../public/fonts/GenYoGothicTW-M-01.ttf', variable: '--font-genyo' })                                         
 
@@ -33,12 +30,19 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={genyo.className}>
-        <AuthProvider>
-          <NavBar />
-          <main>{children}</main>
-        </AuthProvider>
+    <html lang="zh-TW">
+      <body className={`${genyo.className} bg-gray-100 min-h-screen`}>
+          <SessionProvider>
+          <div className="flex flex-col min-h-screen">
+            <NavBar />
+            <main className="flex-grow container mx-auto py-20">
+              {children}
+            </main>
+            <footer className="bg-slate-800 text-white text-center py-4">
+              &copy; {new Date().getFullYear()} Create Next App. All rights reserved.
+            </footer>
+          </div>
+          </SessionProvider>
       </body>
     </html >
   )
