@@ -21,7 +21,7 @@ const authOptions: NextAuthConfig = {
         try {
           const usersCollection = firestore.collection("users");
           const userSnapshot = await usersCollection
-            .where("username", "==", email)
+            .where("email", "==", email)
             .limit(1)
             .get();
 

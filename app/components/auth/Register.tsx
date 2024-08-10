@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const userRegisterValidation = z.object({
   name: z.string().min(1, { message: "Name is required" }),
@@ -33,13 +34,13 @@ const Register = () => {
   
       if (!response.ok) {
         const errorData = await response.json();
-        console.error("Error:", errorData);
+        toast.error(errorData.message); 
         return;
       }
 
       router.push("/login");
     } catch (error) {
-      console.error("Error:", error);
+      toast.error("Something went wrong");
     }
   };
 

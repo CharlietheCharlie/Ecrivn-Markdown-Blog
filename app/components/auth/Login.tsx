@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const userLoginValidation = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -28,9 +29,10 @@ const Login = () => {
       redirect: false,
     });
 
-    if (result) {
-      console.log(result);
+    if (result?.error) {
+      toast.error("Invalid email or password");
     } else {
+      toast.success("Login successful");
       router.push('/');
     }
   };

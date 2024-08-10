@@ -1,7 +1,6 @@
 import bcrypt from "bcrypt";
 import { z } from "zod";
-import { db } from "@/lib/firebase";
-import { collection, getDocs, addDoc, query, where } from "firebase/firestore";
+import {firestore} from "@/lib/firebase";
 import { NextRequest, NextResponse } from "next/server";
 
 const userRegisterValidation = z.object({
@@ -22,7 +21,7 @@ export async function POST(request: NextRequest) {
   }
 
   const { name, email, password } = validation.data;
-  const emailExist = await getDocs(query(collection(db, "users"), where("email", "==", email)));
+  const emailExist = await firestore.collection("users").where("email", "==", email).get();
   if (emailExist.size > 0) {
     return NextResponse.json({ message: "Email already exists" }, {
       status: 400,
@@ -30,11 +29,11 @@ export async function POST(request: NextRequest) {
   }
   const hashedPassword = await bcrypt.hash(password, 10);
   try {
-    const user = await addDoc(collection(db, "users"), {
+    const user = await firestore.collection("users").add({
       name,
       email,
       password: hashedPassword,
-    });
+    })
     return NextResponse.json(user, {
       status: 201,
     });

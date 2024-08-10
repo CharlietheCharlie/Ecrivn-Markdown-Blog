@@ -5,7 +5,9 @@ import Link from 'next/link'
 
 const NavBar = () => {
   const { status, data: session } = useSession();
-  
+  function filterEmail(email: string) {
+    return email.split('@')[0];
+  }
   return (
     <nav className="bg-slate-800 p-4 shadow-md fixed top-0 left-0 right-0 z-10">
       <div className="container mx-auto flex justify-between items-center">
@@ -24,7 +26,7 @@ const NavBar = () => {
           )}
           {status === 'authenticated' && (
             <div className="flex items-center space-x-3 text-white">
-              <span>{session.user?.name}</span>
+              <span>{session.user?.name || (session.user?.email && filterEmail(session.user?.email))}</span>
               <Link href="/api/auth/signout" className="bg-blue-500 text-white py-1 px-3 rounded-lg hover:bg-blue-600 transition duration-300">
                 Sign Out
               </Link>
