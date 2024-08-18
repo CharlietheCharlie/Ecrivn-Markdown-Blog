@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import React, { useCallback, useEffect, useState } from 'react';
 
 const UserHeader = () => {
@@ -24,12 +25,11 @@ const UserHeader = () => {
     }
   }, [controlHeader]);
 
-  // 假设 `userImage` 是你从后端或其他地方获取到的用户头像 URL
-  const userImage = null; // 替换为你的实际逻辑
+  const userImage = null; 
 
   const DefaultAvatar = () => (
     <svg
-      className="rounded-full border-2 border-white shadow-lg"
+      className="rounded-full border-2 border-gray-300 dark:border-gray-600 shadow-md"
       xmlns="http://www.w3.org/2000/svg"
       width="56"
       height="56"
@@ -47,23 +47,23 @@ const UserHeader = () => {
 
   return (
     <header
-      className={`fixed left-0 top-0 w-full bg-gradient-to-r from-blue-500 to-purple-600 shadow-md transition-transform duration-300 z-50 ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}
+      className={`fixed left-0 top-0 w-full bg-white dark:bg-gray-800 shadow-md transition-transform duration-300 z-50 ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}
     >
-      <div className="flex items-center h-20 px-4 gap-4">
+      <div className="flex items-center h-16 px-6 gap-4 border-b border-gray-200 dark:border-gray-700">
         {userImage ? (
-          <img
-            className="rounded-full border-2 border-white shadow-lg"
+          <Image
+            className="rounded-full border-2 border-gray-300 dark:border-gray-600 shadow-md"
             src={userImage}
             alt="User avatar"
-            width={56}
-            height={56}
+            width={48}
+            height={48}
           />
         ) : (
           <DefaultAvatar />
         )}
         <div className="flex flex-col">
-          <h3 className="text-lg font-bold text-white">Username</h3>
-          <p className="text-sm text-gray-200">Subtitle or Status</p>
+          <h3 className="text-md font-semibold text-gray-800 dark:text-gray-200">Username</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Subtitle or Status</p>
         </div>
       </div>
     </header>

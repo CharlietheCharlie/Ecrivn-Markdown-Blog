@@ -42,28 +42,28 @@ const Login = () => {
   };
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="bg-white p-6 rounded-lg shadow-lg space-y-6 max-w-md mx-auto">
+    <form onSubmit={form.handleSubmit(onSubmit)} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg space-y-6 max-w-md mx-auto transition-colors duration-300">
       <div>
-        <label className="block text-gray-700 font-bold mb-2">Email</label>
+        <label className="block text-gray-700 dark:text-gray-300 font-bold mb-2">Email</label>
         <input 
           type="email"
           {...form.register("email")}
-          className="w-full p-3 border rounded-lg focus:outline-none focus:border-blue-500"
+          className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 transition-colors duration-300"
         />
         {form.formState.errors.email && <span className="text-red-500 text-sm">{form.formState.errors.email.message}</span>}
       </div>
       <div>
-        <label className="block text-gray-700 font-bold mb-2">Password</label>
+        <label className="block text-gray-700 dark:text-gray-300 font-bold mb-2">Password</label>
         <input 
           type="password"
           {...form.register("password")}
-          className="w-full p-3 border rounded-lg focus:outline-none focus:border-blue-500"
+          className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 transition-colors duration-300"
         />
         {form.formState.errors.password && <span className="text-red-500 text-sm">{form.formState.errors.password.message}</span>}
       </div>
       <button 
         type="submit"
-        className="w-full bg-gray-700 text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition duration-300 shadow-md"
+        className="w-full bg-gray-700 dark:bg-gray-900 text-white py-3 rounded-lg font-semibold hover:bg-gray-800 dark:hover:bg-gray-700 transition-colors duration-300 shadow-md"
       >
         Login
       </button>
@@ -71,7 +71,7 @@ const Login = () => {
         <button 
           type="button"
           onClick={handleOAuthSignIn("google")}
-          className="w-1/2 bg-white text-gray-700 p-3 rounded-lg font-semibold border border-gray-300 hover:bg-gray-100 transition duration-300 shadow-md flex items-center justify-center space-x-2"
+          className="w-1/2 bg-white dark:bg-gray-700 text-gray-700 dark:text-white p-3 rounded-lg font-semibold border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-300 shadow-md flex items-center justify-center space-x-2"
         >
           <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
             <path fill="#EA4335" d="M24 9.5c3.67 0 6.76 1.26 9.32 3.7l7.15-7.14C35.9 2.1 30.31 0 24 0 14.71 0 7 5.8 3.67 13.78l7.9 6.14C13.51 13.1 18.36 9.5 24 9.5z"/>
@@ -84,7 +84,7 @@ const Login = () => {
         <button 
           type="button"
           onClick={handleOAuthSignIn("github")}
-          className="w-1/2 bg-gray-800 text-white p-3 rounded-lg font-semibold hover:bg-gray-900 transition duration-300 shadow-md flex items-center justify-center space-x-2"
+          className="w-1/2 bg-gray-800 dark:bg-gray-900 text-white p-3 rounded-lg font-semibold hover:bg-gray-900 dark:hover:bg-gray-800 transition-colors duration-300 shadow-md flex items-center justify-center space-x-2"
         >
           <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 0C5.373 0 0 5.373 0 12c0 5.303 3.438 9.8 8.205 11.387.6.111.82-.26.82-.577v-2.234c-3.338.724-4.043-1.608-4.043-1.608-.546-1.386-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.833 2.807 1.304 3.492.996.108-.774.418-1.304.762-1.604-2.666-.3-5.467-1.333-5.467-5.931 0-1.31.469-2.38 1.236-3.22-.123-.302-.536-1.518.117-3.165 0 0 1.008-.322 3.3 1.23.957-.266 1.98-.399 3-.404 1.02.005 2.043.138 3 .404 2.292-1.552 3.3-1.23 3.3-1.23.654 1.647.241 2.863.118 3.165.77.84 1.235 1.91 1.235 3.22 0 4.609-2.803 5.628-5.475 5.923.43.372.814 1.103.814 2.222v3.293c0 .319.218.694.825.576C20.565 21.795 24 17.298 24 12c0-6.627-5.373-12-12-12z"/>

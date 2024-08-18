@@ -34,20 +34,20 @@ export default function Post({ initialContent, postId }: Props) {
       const mdxSerialized = await serialize(initialContent, options);
       setMdxSource(mdxSerialized);
     };
-
     initMdx();
   }, [initialContent]);
 
   useEffect(() => {
-    if (contentRef.current) {
+    if (contentRef.current && (isEditing || isExtend)) {
       setContentHeight(contentRef.current.scrollHeight);
     }
-  }, [isExtend]);
+  }, [isEditing, isExtend]);
 
   const handleSave = async () => {
     const mdxSerialized = await serialize(content, options);
     setMdxSource(mdxSerialized);
     setIsEditing(false);
+    setIsPreviewing(false);
     await fetch(`/api/users/1/posts/${postId}`, {
       method: 'PUT',
       headers: {
@@ -70,26 +70,26 @@ export default function Post({ initialContent, postId }: Props) {
   return (
     <>
       <div
-        className="overflow-hidden transition-all duration-700 ease-in-out bg-white shadow-md rounded-lg"
+        className="overflow-hidden transition-all duration-700 ease-in-out bg-white dark:bg-gray-800 shadow-md rounded-lg"
         style={{
           maxHeight: isExtend ? `${contentHeight}px` : `${viewportHeight * 0.5}px`,
+          minHeight: `${viewportHeight * 0.3}px`,
         }}
         ref={contentRef}
       >
-        <div
-          onClick={toggleHeight}
-          className={`p-4 cursor-pointer ${!isExtend && 'bg-gradient-to-b from-transparent to-slate-300'}`}
-        >
+        <div onClick={toggleHeight} className="p-4 cursor-pointer">
           {isEditing ? (
             <textarea
-              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
               onChange={(e) => setContent(e.target.value)}
               value={content}
               rows={10}
             />
           ) : (
             mdxSource && (
-              <article className="prose prose-slate md:prose-lg">
+              <article
+                className={`prose prose-slate md:prose-lg dark:prose-invert ${!isExtend && 'line-clamp-3 overflow-hidden'}`}
+              >
                 <MDXRemote {...mdxSource} />
               </article>
             )
@@ -97,7 +97,7 @@ export default function Post({ initialContent, postId }: Props) {
           {!isEditing && (
             <button
               onClick={() => setIsEditing(true)}
-              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500"
             >
               Edit
             </button>
@@ -106,13 +106,13 @@ export default function Post({ initialContent, postId }: Props) {
             <div className="mt-4 flex gap-3">
               <button
                 onClick={handlePreview}
-                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
+                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 dark:hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 dark:focus:ring-green-500"
               >
                 {isPreviewing ? 'Close Preview' : 'Preview'}
               </button>
               <button
                 onClick={handleSave}
-                className="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                className="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 dark:hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:focus:ring-indigo-500"
               >
                 Save
               </button>

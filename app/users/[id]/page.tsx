@@ -23,9 +23,9 @@ const UserPage = ({ params: { id } }: Props) => {
   });
 
   return (
-    <div className="pt-5 px-4 max-w-3xl mx-auto">
+    <div className="pt-5 px-4 max-w-5xl mx-auto">
       <Header />
-      <div className="space-y-8">
+      <div className="space-y-10">
         {Array.isArray(items) && items.map((post: Post) => (
           <Post key={post.id} initialContent={post.content} postId={post.id} />
         ))}
