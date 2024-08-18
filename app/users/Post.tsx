@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
@@ -6,9 +6,11 @@ import '@/styles/highlight-js/hybrid.css';
 import rehypeHighlight from 'rehype-highlight';
 import remarkGfm from 'remark-gfm';
 import useViewport from '../components/useViewport';
+import { useSession } from 'next-auth/react';
 
 type Props = {
   initialContent: string;
+  userName: string;
   postId: string;
 };
 
@@ -19,15 +21,15 @@ const options = {
   },
 };
 
-export default function Post({ initialContent, postId }: Props) {
+export default function Post({ initialContent, userName, postId }: Props) {
   const contentRef = useRef<HTMLDivElement>(null);
-  const [contentHeight, setContentHeight] = useState(0);
-  const [isExtend, setIsExtend] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [isPreviewing, setIsPreviewing] = useState(false);
+  const { viewportHeight } = useViewport();
+  const { data: session } = useSession();
+
   const [content, setContent] = useState(initialContent);
   const [mdxSource, setMdxSource] = useState<MDXRemoteSerializeResult | null>(null);
-  const { viewportHeight } = useViewport();
+  const [isEditing, setIsEditing] = useState(false);
+  const [isExtend, setIsExtend] = useState(false);
 
   useEffect(() => {
     const initMdx = async () => {
@@ -37,18 +39,12 @@ export default function Post({ initialContent, postId }: Props) {
     initMdx();
   }, [initialContent]);
 
-  useEffect(() => {
-    if (contentRef.current && (isEditing || isExtend)) {
-      setContentHeight(contentRef.current.scrollHeight);
-    }
-  }, [isEditing, isExtend]);
-
   const handleSave = async () => {
     const mdxSerialized = await serialize(content, options);
     setMdxSource(mdxSerialized);
     setIsEditing(false);
-    setIsPreviewing(false);
-    await fetch(`/api/users/1/posts/${postId}`, {
+
+    await fetch(`/api/users/${userName}/posts/${postId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -57,22 +53,23 @@ export default function Post({ initialContent, postId }: Props) {
     });
   };
 
-  const handlePreview = async () => {
-    const mdxSerialized = await serialize(content, options);
-    setMdxSource(mdxSerialized);
-    setIsPreviewing(!isPreviewing);
+  const cancelEdit = () => {
+    setContent(initialContent);
+    setIsEditing(false);
   };
 
   const toggleHeight = () => {
     setIsExtend(!isExtend);
   };
 
+  const isAuthorized = session?.user?.name === userName;
+
   return (
-    <>
+    <div className="post-container">
       <div
         className="overflow-hidden transition-all duration-700 ease-in-out bg-white dark:bg-gray-800 shadow-md rounded-lg"
         style={{
-          maxHeight: isExtend ? `${contentHeight}px` : `${viewportHeight * 0.5}px`,
+          maxHeight: isExtend ? 'none' : `${viewportHeight * 0.5}px`,
           minHeight: `${viewportHeight * 0.3}px`,
         }}
         ref={contentRef}
@@ -94,44 +91,36 @@ export default function Post({ initialContent, postId }: Props) {
               </article>
             )
           )}
-          {!isEditing && (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500"
-            >
-              Edit
-            </button>
-          )}
-          {isEditing && (
-            <div className="mt-4 flex gap-3">
-              <button
-                onClick={handlePreview}
-                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 dark:hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 dark:focus:ring-green-500"
-              >
-                {isPreviewing ? 'Close Preview' : 'Preview'}
-              </button>
+        </div>
+      </div>
+
+      {isAuthorized && (
+        <div className="mt-4 flex gap-3">
+          {isEditing ? (
+            <>
               <button
                 onClick={handleSave}
                 className="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 dark:hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:focus:ring-indigo-500"
               >
                 Save
               </button>
-            </div>
+              <button
+                onClick={cancelEdit}
+                className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500"
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500"
+            >
+              Edit
+            </button>
           )}
         </div>
-      </div>
-      <div className="flex justify-start p-2 gap-3 mt-4">
-        <div className="cursor-pointer hover:text-red-500">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-          </svg>
-        </div>
-        <div className="cursor-pointer hover:text-blue-500">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 0 1-.923 1.785A5.969 5.969 0 0 0 6 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337Z" />
-          </svg>
-        </div>
-      </div>
-    </>
+      )}
+    </div>
   );
 }

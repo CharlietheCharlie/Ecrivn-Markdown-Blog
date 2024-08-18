@@ -22,7 +22,7 @@ function useInfiniteScroll(fetchData: (currentPage: number) => Promise<any[]>) {
         if (!isFetching) return;
         throttledFetchData(currentPage).then(newItems => {
             setIsFetching(false);
-            if (newItems.length > 0) {
+            if (newItems?.length > 0) {
                 setItems(prevItems => [...prevItems, ...newItems]);
                 setCurrentPage(currentPage + 1);
             }else{

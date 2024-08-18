@@ -6,6 +6,7 @@ import { NextAuthConfig } from "next-auth";
 import { FirestoreAdapter } from "@auth/firebase-adapter";
 import { firestore } from "./lib/firebase";
 import Credentials from "next-auth/providers/credentials";
+
 const authOptions: NextAuthConfig = {
   adapter: FirestoreAdapter({ namingStrategy: "snake_case", firestore }),
   providers: [

@@ -1,9 +1,10 @@
 "use client";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { useEffect, useState } from "react";
 
 const userRegisterValidation = z.object({
   name: z.string().min(1, { message: "Name is required" }),
@@ -13,6 +14,7 @@ const userRegisterValidation = z.object({
 
 const Register = () => {
   const router = useRouter();
+  const [nameAvailable, setNameAvailable] = useState(true);
   const form = useForm<z.infer<typeof userRegisterValidation>>({
     resolver: zodResolver(userRegisterValidation),
     defaultValues: {
@@ -22,7 +24,38 @@ const Register = () => {
     }
   });
 
+  const name = useWatch({ control: form.control, name: "name" });
+
+  useEffect(() => {
+    const checkNameAvailability = async (name: string) => {
+      if (name) {
+        try {
+          const response = await fetch(`/api/check-name?name=${name}`);
+          const data = await response.json();
+          setNameAvailable(data.available);
+          if (!data.available) {
+            form.setError("name", { type: "manual", message: "Username is already taken" });
+          } else {
+            form.clearErrors("name");
+          }
+        } catch (error) {
+          toast.error("Error checking name availability");
+        }
+      }
+    };
+
+    const debounce = setTimeout(() => {
+      checkNameAvailability(name);
+    }, 500); 
+
+    return () => clearTimeout(debounce);
+  }, [name, form]);
+
   const onSubmit = async (data: z.infer<typeof userRegisterValidation>) => {
+    if (!nameAvailable) {
+      return;
+    }
+
     try {
       const response = await fetch('/api/register', {
         method: 'POST',
@@ -50,7 +83,7 @@ const Register = () => {
         <label className="block text-gray-700 dark:text-gray-300 font-bold mb-2">Name</label>
         <input 
           {...form.register("name")} 
-          className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 transition-colors duration-300"
+          className={`w-full p-3 border ${form.formState.errors.name ? "border-red-500" : "border-gray-300 dark:border-gray-600"} rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 transition-colors duration-300`}
         />
         {form.formState.errors.name && <span className="text-red-500 text-sm">{form.formState.errors.name.message}</span>}
       </div>
@@ -74,7 +107,8 @@ const Register = () => {
       </div>
       <button 
         type="submit"
-        className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors duration-300"
+        className={`w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors duration-300 ${!nameAvailable ? "cursor-not-allowed opacity-50" : ""}`}
+        disabled={!nameAvailable}
       >
         Register
       </button>
