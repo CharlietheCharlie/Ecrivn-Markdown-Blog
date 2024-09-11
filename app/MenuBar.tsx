@@ -16,6 +16,7 @@ const MenuBar = () => {
   }
 
   return (
+    <>
     <Menu as="div" className="fixed right-0 m-3 z-10">
       <div>
         <MenuButton className="flex items-center justify-center w-10 h-10 rounded-full border shadow-sm bg-white text-gray-700 hover:bg-gray-100 transition duration-200">
@@ -49,23 +50,17 @@ const MenuBar = () => {
             )}
 
             {status === 'unauthenticated' && (
-              <button
-                onClick={() => setIsOpen(true)}
-                className="block px-4 py-2 text-sm text-gray-700 dark:text-white transition duration-200"
-              >
-                Login
-              </button>
+              <MenuItem>
+                <button
+                  onClick={() => setIsOpen(true)}
+                  className="block px-4 py-2 text-sm text-gray-700 dark:text-white transition duration-200"
+                >
+                  Login
+                </button>
+              </MenuItem>
             )}
 
-            <Transition appear show={isOpen} as={Fragment}>
-              <Dialog className="relative z-50" onClose={() => setIsOpen(false)}>
-                <div onClick={() => setIsOpen(false)} className="fixed inset-0 flex w-screen items-center justify-center p-4">                    <div className="" onClick={e => { e.stopPropagation() }}>
-                  <Login />
-                </div>
-                </div>
-              </Dialog>
-            </Transition>
-
+           
             {status === 'authenticated' && (
               <>
                 <div className="px-4 py-2">
@@ -95,6 +90,15 @@ const MenuBar = () => {
         </MenuItems>
       </Transition>
     </Menu>
+     <Transition appear show={isOpen} as={Fragment}>
+     <Dialog className="relative z-50" onClose={() => setIsOpen(false)}>
+       <div onClick={() => setIsOpen(false)} className="fixed inset-0 flex w-screen items-center justify-center p-4">                    <div className="" onClick={e => { e.stopPropagation() }}>
+         <Login />
+       </div>
+       </div>
+     </Dialog>
+   </Transition>
+    </>
   );
 };
 

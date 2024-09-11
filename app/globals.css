@@ -18,6 +18,11 @@ body {
   color: rgb(var(--foreground-rgb));
 }
 
+html {
+  overflow: auto !important;
+  padding: 0 !important;
+}
+
 
 @layer base{
   h1{
