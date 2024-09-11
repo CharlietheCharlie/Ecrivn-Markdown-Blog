@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { Toaster } from "react-hot-toast";
 import { SessionProvider } from "next-auth/react"
 import localFont from 'next/font/local'
-import NavBar from './NavBar'
+import Menu from './MenuBar'
 import { ThemeProvider } from './components/theme-provider';
 
 const genyo = localFont({ src: '../public/fonts/GenYoGothicTW-M-01.ttf', variable: '--font-genyo' })
@@ -42,7 +42,7 @@ export default function RootLayout({
         >
           <SessionProvider>
             <div className="flex flex-col min-h-screen">
-              <NavBar />
+              <Menu />
               <main className="flex-grow container mx-auto py-20">
                 <Toaster position="top-center" />
                 {children}
