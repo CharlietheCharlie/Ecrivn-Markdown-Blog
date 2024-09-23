@@ -2,7 +2,6 @@ import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 
 export default auth((req) => {
-  throw new Error("Not implemented");
   if (!req.auth && req.nextUrl.pathname !== "/login") {
     return NextResponse.redirect("/login");
   }

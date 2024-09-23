@@ -60,6 +60,30 @@ const authOptions: NextAuthConfig = {
   pages: {
     signIn: "/login",
   },
+  callbacks: {
+    async signIn({ user, account, profile }) {
+      if(["google", "github"].includes(account?.provider as string)) {
+        const usersCollection = firestore.collection("users");
+        const userSnapshot = await usersCollection
+        .where("email", "==", user.email)
+        .limit(1)
+        .get();
+
+        if (userSnapshot.empty) {
+          await usersCollection.add({
+            email: user.email,
+            name: user.name,
+            image: user.image,
+            createdAt: new Date(),
+            provider: "google",
+          });
+
+          return true;
+        }
+      }
+      return true;
+    }
+  },
 };
 
 export const { auth, handlers, signIn, signOut } = NextAuth(authOptions);

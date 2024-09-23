@@ -1,16 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import schema from "@/app/api/users/schema";
+import { firestore } from "@/lib/firebase";
+import schema from "../schema";
 
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+    const { id } = params;
 
-    const user = await {}.user.findUnique({
-        where: { id: params.id }
-    })
-    if (!user) {
+    const userSnapshot = await firestore.collection("users").where("id", "==", id).get();
+
+    if (!userSnapshot) {
         return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
-    return NextResponse.json(user)
+    return NextResponse.json(userSnapshot, { status: 200 })
 }
 
 
@@ -23,22 +24,11 @@ export async function PUT(
     if (!validation.success) {
         return NextResponse.json(validation.error.errors, { status: 400 })
     }
-    const user = await {}.user.findUnique({
-        where: { id: params.id }
-    })
+    const user = await firestore.collection("users").where("id", "==", params.id).get();
     if (!user) {
-        return NextResponse.json('user not found', { status: 400 })
-
+        return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
-    const updatedUser = await {}.user.update({
-        where: {
-            id: user.id
-        },
-        data: {
-            name: body.name,
-            email: body.email
-        }
-    });
+    const updatedUser = await firestore.collection("users").doc(user.docs[0].id).update(validation.data);
     return NextResponse.json(updatedUser, { status: 201 })
 
 }
@@ -47,19 +37,12 @@ export async function PUT(
 export async function DELETE(
     request: NextRequest,
     { params }: { params: { id: string } }) {
-
-    const user = await {}.user.findUnique({
-        where: { id: params.id }
-    })
-
+    const { id } = params;
+    const user = await firestore.collection("users").where("id", "==", params.id).get();
     if (!user) {
         return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
-    const deletedUser = {}.user.delete({
-        where: {
-            id: user.id
-        }
-    })
+    const deletedUser = await firestore.collection("users").doc(user.docs[0].id).delete();
 
     return NextResponse.json({});
 

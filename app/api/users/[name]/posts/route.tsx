@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { firestore } from "@/lib/firebase";
 
-export async function GET(request: NextRequest, params: { params: { name: string } }) {
-    const { name } = params.params;
+export async function GET(request: NextRequest, {params}: { params: { name: string } }) {
+    const { name } = params;
 
     const userSnapshot = await firestore.collection("users").where("name", "==", name).get();
 
