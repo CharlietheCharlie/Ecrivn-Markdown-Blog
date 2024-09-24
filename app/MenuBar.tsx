@@ -59,8 +59,8 @@ const MenuBar = () => {
                       <button
                         onClick={() => setIsOpenLogin(true)}
                         className={`${
-                          active ? 'bg-gray-100 dark:bg-gray-700' : ''
-                        } block px-4 py-2 text-sm text-gray-700 dark:text-white transition duration-200`}
+                          active ? 'bg-indigo-50 dark:bg-gray-700' : ''
+                        } block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-white rounded-lg transition duration-200`}
                       >
                         Login
                       </button>
@@ -71,8 +71,8 @@ const MenuBar = () => {
                       <button
                         onClick={() => setIsOpenSignup(true)}
                         className={`${
-                          active ? 'bg-gray-100 dark:bg-gray-700' : ''
-                        } block px-4 py-2 text-sm text-gray-700 dark:text-white transition duration-200`}
+                          active ? 'bg-indigo-50 dark:bg-gray-700' : ''
+                        } block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-white rounded-lg transition duration-200`}
                       >
                         Sign up
                       </button>
@@ -89,42 +89,44 @@ const MenuBar = () => {
                     </span>
                   </div>
 
-                <Link
-                  href="/api/auth/signout"
-                  className="block px-4 py-2 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 transition duration-300"
-                        >
-                          Sign Out
-                      </Link>
+                  <Link
+                    href="/api/auth/signout"
+                    className="block px-4 py-2 mt-2 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 transition duration-300"
+                  >
+                    Sign Out
+                  </Link>
                 </>
               )}
 
               <div className="border-t border-gray-200 dark:border-gray-700 mt-2"></div>
 
-            <Link
-              href="/settings"
-              className="block px-4 py-2 text-sm text-gray-700 dark:text-white transition duration-200"
-                    >
-                      Settings
-                  </Link>
+              <Link
+                href="/settings"
+                className="block px-4 py-2 mt-2 text-sm text-gray-700 dark:text-white hover:bg-indigo-50 dark:hover:bg-gray-700 rounded-lg transition duration-200"
+              >
+                Settings
+              </Link>
             </div>
           </MenuItems>
         </Transition>
       </Menu>
 
+      {/* 登入彈窗 */}
       <Transition appear show={isOpenLogin} as={Fragment}>
         <Dialog className="relative z-50" onClose={() => setIsOpenLogin(false)}>
           <div onClick={() => setIsOpenLogin(false)} className="fixed inset-0 flex w-screen items-center justify-center p-4">
-            <div className="" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg" onClick={(e) => e.stopPropagation()}>
               <Login />
             </div>
           </div>
         </Dialog>
       </Transition>
 
+      {/* 註冊彈窗 */}
       <Transition appear show={isOpenSignup} as={Fragment}>
         <Dialog className="relative z-50" onClose={() => setIsOpenSignup(false)}>
           <div onClick={() => setIsOpenSignup(false)} className="fixed inset-0 flex w-screen items-center justify-center p-4">
-            <div className="" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg" onClick={(e) => e.stopPropagation()}>
               <Register />
             </div>
           </div>

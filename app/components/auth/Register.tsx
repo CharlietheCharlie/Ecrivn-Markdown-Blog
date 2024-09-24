@@ -69,9 +69,9 @@ const Register = () => {
         const errorData = await response.json();
         toast.error(errorData.message); 
         return;
+      }else{
+        toast.success("Registration successful");
       }
-
-      router.push("/login");
     } catch (error) {
       toast.error("Something went wrong");
     }

@@ -31,7 +31,8 @@ export async function POST(request: NextRequest) {
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  const uid = crypto.randomUUID();
+  const userRef = firestore.collection("users").doc();
+  const uid = userRef.id;
 
   try {
     const user = await firestore.collection("users").add({

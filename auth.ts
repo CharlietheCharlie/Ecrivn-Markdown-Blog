@@ -16,7 +16,12 @@ const authOptions: NextAuthConfig = {
         password: { label: "Password", type: "password" },
       },
       async authorize({ email, password }) {
-        if (!email || !password || typeof email !== "string" || typeof password !== "string") {
+        if (
+          !email ||
+          !password ||
+          typeof email !== "string" ||
+          typeof password !== "string"
+        ) {
           throw new Error("Invalid credentials");
         }
         try {
@@ -44,15 +49,20 @@ const authOptions: NextAuthConfig = {
           return {
             id: userDoc.id,
             username: userData.username,
-            email: userData.email,};
+            email: userData.email,
+          };
         } catch (error) {
           console.error("Error during authorization:", error);
           return null;
         }
       },
     }),
-    Google,
-    GitHub,
+    Google({
+      allowDangerousEmailAccountLinking: true
+    }),
+    GitHub({
+      allowDangerousEmailAccountLinking: true
+    }),
   ],
   session: {
     strategy: "jwt",
@@ -62,27 +72,52 @@ const authOptions: NextAuthConfig = {
   },
   callbacks: {
     async signIn({ user, account, profile }) {
-      if(["google", "github"].includes(account?.provider as string)) {
+      if (["google", "github"].includes(account?.provider as string)) {
         const usersCollection = firestore.collection("users");
-        const userSnapshot = await usersCollection
-        .where("email", "==", user.email)
-        .limit(1)
-        .get();
+        const userSnapshotByEmail = await usersCollection
+          .where("email", "==", user.email)
+          .limit(1)
+          .get();
 
-        if (userSnapshot.empty) {
+        if (userSnapshotByEmail.empty) {
+          let username = user.email?.split("@")[0];
+          let isUnique = false;
+          while (!isUnique) {
+            const userSnapshotByName = await usersCollection
+              .where("name", "==", username)
+              .limit(1)
+              .get();
+            if (userSnapshotByName.empty) {
+              isUnique = true;
+            } else {
+              username =
+                (user.email?.split("@")[0] || "") +
+                Math.floor(Math.random() * 10000);
+            }
+          }
+
+          const userRef = usersCollection.doc();
           await usersCollection.add({
             email: user.email,
-            name: user.name,
+            name: username,
+            id: userRef.id,
             image: user.image,
             createdAt: new Date(),
-            provider: "google",
+            providers: [account?.provider as string],
           });
-
-          return true;
+        } else {
+          const userDoc = userSnapshotByEmail.docs[0];
+          const userData = userDoc.data();
+          const providers = userData.providers || [];
+          if (!providers.includes(account?.provider)) {
+            await usersCollection.doc(userDoc.id).update({
+              providers: [...providers, account?.provider],
+            });
+          }
         }
       }
       return true;
-    }
+    },
   },
 };
 

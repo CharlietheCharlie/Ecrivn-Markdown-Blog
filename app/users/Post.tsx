@@ -2,10 +2,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
-import '@/styles/highlight-js/hybrid.css';
+import '@/styles/highlight-js/hybrid.css'; 
 import rehypeHighlight from 'rehype-highlight';
 import remarkGfm from 'remark-gfm';
-import useViewport from '../components/useViewport';
+import useViewport from '../hooks/useViewport';
 import { useSession } from 'next-auth/react';
 
 type Props = {
@@ -65,19 +65,19 @@ export default function Post({ initialContent, userName, postId }: Props) {
   const isAuthorized = session?.user?.name === userName;
 
   return (
-    <div className="post-container">
+    <div className="post-container mb-8">
       <div
-        className="overflow-hidden transition-all duration-700 ease-in-out bg-white dark:bg-gray-800 shadow-md rounded-lg"
+        className="overflow-hidden transition-all duration-700 ease-in-out bg-white dark:bg-gray-900 shadow-md rounded-lg"
         style={{
           maxHeight: isExtend ? 'none' : `${viewportHeight * 0.5}px`,
           minHeight: `${viewportHeight * 0.3}px`,
         }}
         ref={contentRef}
       >
-        <div onClick={toggleHeight} className="p-4 cursor-pointer">
+        <div onClick={toggleHeight} className="p-6 cursor-pointer">
           {isEditing ? (
             <textarea
-              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+              className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 text-sm"
               onChange={(e) => setContent(e.target.value)}
               value={content}
               rows={10}
@@ -85,7 +85,7 @@ export default function Post({ initialContent, userName, postId }: Props) {
           ) : (
             mdxSource && (
               <article
-                className={`prose prose-slate md:prose-lg dark:prose-invert ${!isExtend && 'line-clamp-3 overflow-hidden'}`}
+                className={`prose prose-sm sm:prose lg:prose xl:prose-xl dark:prose-invert ${!isExtend && 'line-clamp-3 overflow-hidden'}`}
               >
                 <MDXRemote {...mdxSource} />
               </article>
@@ -100,13 +100,13 @@ export default function Post({ initialContent, userName, postId }: Props) {
             <>
               <button
                 onClick={handleSave}
-                className="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 dark:hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:focus:ring-indigo-500"
+                className="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 dark:hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:focus:ring-indigo-500 text-sm"
               >
                 Save
               </button>
               <button
                 onClick={cancelEdit}
-                className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500"
+                className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500 text-sm"
               >
                 Cancel
               </button>
@@ -114,7 +114,7 @@ export default function Post({ initialContent, userName, postId }: Props) {
           ) : (
             <button
               onClick={() => setIsEditing(true)}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500"
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 text-sm"
             >
               Edit
             </button>
