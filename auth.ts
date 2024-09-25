@@ -46,11 +46,7 @@ const authOptions: NextAuthConfig = {
             throw new Error("Invalid password");
           }
 
-          return {
-            id: userDoc.id,
-            username: userData.username,
-            email: userData.email,
-          };
+          return userData;
         } catch (error) {
           console.error("Error during authorization:", error);
           return null;
@@ -58,10 +54,10 @@ const authOptions: NextAuthConfig = {
       },
     }),
     Google({
-      allowDangerousEmailAccountLinking: true
+      allowDangerousEmailAccountLinking: true,
     }),
     GitHub({
-      allowDangerousEmailAccountLinking: true
+      allowDangerousEmailAccountLinking: true,
     }),
   ],
   session: {
@@ -116,7 +112,11 @@ const authOptions: NextAuthConfig = {
           }
         }
       }
+      
       return true;
+    },
+    async session({ session }) {
+      return session
     },
   },
 };

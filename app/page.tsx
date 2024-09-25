@@ -28,7 +28,6 @@ export default function Home() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="container mx-auto flex flex-col md:flex-row items-center justify-between p-8 space-y-8 md:space-y-0">
-        {/* 左側程式碼圖片 */}
         <div className="w-full md:w-1/2 flex justify-center">
           <Image
             ref={imgRef}
@@ -40,7 +39,6 @@ export default function Home() {
           />
         </div>
 
-        {/* 右側文字 */}
         <div className="w-full md:w-1/2 text-center md:text-left">
           <h1 className="text-4xl font-bold text-gray-800 mb-4">
             Welcome to My Coding World

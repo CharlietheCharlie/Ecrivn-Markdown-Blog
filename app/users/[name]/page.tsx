@@ -11,10 +11,14 @@ import { useRouter } from 'next/navigation';
 type Post = {
   id: string;
   content: string;
+  createdAt: string;
+  userName: string;
+  commentCount: number;
 };
 
+
 async function fetchUserPosts(name: string, page: number): Promise<Post[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${name}/posts?page=${page}&limit=5`);
+  const res = await fetch(`/api/users/${name}/posts?page=${page}&limit=5`);
   if (!res.ok) {
     throw new Error('Failed to fetch posts');
   }
@@ -23,7 +27,7 @@ async function fetchUserPosts(name: string, page: number): Promise<Post[]> {
 }
 
 async function fetchUserData(name: string): Promise<{ name: string } | null> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${name}`);
+  const res = await fetch(`/api/users/${name}`);
   if (!res.ok) {
     return null;
   }
@@ -42,15 +46,13 @@ export default function UserPage({ params }: { params: { name: string } }) {
         router.push('/');
         return;
       }
-
-      // 只有當 session 可用時才進行檢查
       if (status === 'authenticated' && session?.user?.name === user.name) {
         setIsAuthor(true);
       }
     }
 
     fetchInitialData();
-  }, [params.name, session, status]);
+  }, [params.name, session, status, router]);
 
   const { items: posts, isLoading, hasMore, loaderRef } = useInfiniteScroll<Post>(
     (page) => fetchUserPosts(params.name, page),
@@ -63,7 +65,7 @@ export default function UserPage({ params }: { params: { name: string } }) {
       {isAuthor && <NewPost userName={params.name} />}
       <div className="space-y-10">
         {posts.map((post: Post) => (
-          <Post key={post.id} initialContent={post.content} postId={post.id} userName={params.name} />
+          <Post isAuthor={isAuthor} key={post.id} {...post} />
         ))}
       </div>
 
