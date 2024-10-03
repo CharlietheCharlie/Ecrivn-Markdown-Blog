@@ -15,25 +15,23 @@ const ThemeSwitch = () => {
     if (!mounted) return null;
 
     const handleToggle = () => {
-        
         setIsDark(!isDark);
         setTimeout(() => {
             setTheme(isDark ? 'light' : 'dark');
-        }, 300); 
+        }, 300);
     };
 
     return (
         <div
             className={`relative w-16 h-8 flex items-center cursor-pointer rounded-full transition-colors duration-300 ${
-                isDark ? 'bg-gray-800' : 'bg-gray-300'
+                isDark ? 'bg-gray-700 border border-gray-400' : 'bg-white border border-gray-200'
             }`}
             onClick={handleToggle}
         >
             <div
-                className={`absolute top-0.5 left-0.5 w-7 h-7 rounded-full shadow-md transform transition-all duration-300 ease-in-out flex items-center justify-center ${
-                    isDark ? 'translate-x-8 bg-gray-900' : 'translate-x-0 bg-gray-100'
+                className={`absolute w-7 h-7 rounded-full shadow-md transform transition-all duration-300 ease-in-out flex items-center justify-center ${
+                    isDark ? 'translate-x-8 bg-gray-600' : 'translate-x-0 bg-white'
                 }`}
-                style={{ boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)' }}
             >
                 {isDark ? (
                     <svg
@@ -42,7 +40,7 @@ const ThemeSwitch = () => {
                         viewBox="0 0 24 24"
                         strokeWidth={1.5}
                         stroke="currentColor"
-                        className="w-5 h-5 text-gray-400"
+                        className="w-5 h-5 text-white"
                     >
                         <path
                             strokeLinecap="round"
@@ -57,7 +55,7 @@ const ThemeSwitch = () => {
                         viewBox="0 0 24 24"
                         strokeWidth={1.5}
                         stroke="currentColor"
-                        className="w-5 h-5 text-gray-600"
+                        className="w-5 h-5 text-black"
                     >
                         <path
                             strokeLinecap="round"

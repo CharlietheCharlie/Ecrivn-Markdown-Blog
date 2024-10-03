@@ -5,6 +5,9 @@ import { SessionProvider } from "next-auth/react"
 import localFont from 'next/font/local'
 import Menu from './MenuBar'
 import { ThemeProvider } from './components/theme-provider';
+import Footer from './Footer';
+import Logo from './Logo';
+import Chat from './components/Chat';
 
 const genyo = localFont({ src: '../public/fonts/GenYoGothicTW-M-01.ttf', variable: '--font-genyo' })
 
@@ -42,14 +45,14 @@ export default function RootLayout({
         >
           <SessionProvider>
             <div className="flex flex-col min-h-screen">
+              <Logo/>
               <Menu />
               <main className="flex-grow container mx-auto py-20">
                 <Toaster position="top-center" />
                 {children}
               </main>
-              <footer className="bg-gray-800 dark:bg-gray-700 text-white text-center py-4 transition-colors duration-300">
-                &copy; {new Date().getFullYear()} Create Next App. All rights reserved.
-              </footer>
+              <Chat/>
+              <Footer />
             </div>
           </SessionProvider>
         </ThemeProvider>

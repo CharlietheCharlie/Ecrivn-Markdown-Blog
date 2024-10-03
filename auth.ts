@@ -112,10 +112,27 @@ const authOptions: NextAuthConfig = {
           }
         }
       }
-      
       return true;
     },
     async session({ session }) {
+      const usersCollection = firestore.collection("users");
+      const userSnapshot = await usersCollection.where(
+        "email",
+        "==",
+        session?.user?.email
+      ).limit(1).get();
+      if (userSnapshot.empty) {
+        return session;
+      }
+
+      const userDoc = userSnapshot.docs[0];
+      const userData = userDoc.data();
+      session.user = {
+        ...session.user,
+        id: userData.id,
+        name: userData.name,
+        image: userData.image,
+      }
       return session
     },
   },

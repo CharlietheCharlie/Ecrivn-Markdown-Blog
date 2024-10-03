@@ -33,7 +33,8 @@ const Login = () => {
       toast.error("Invalid email or password");
     } else {
       toast.success("Login successful");
-      router.push('/');
+      
+      router.push('/highlights');
     }
   };
 

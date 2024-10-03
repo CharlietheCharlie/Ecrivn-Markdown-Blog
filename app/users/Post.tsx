@@ -209,7 +209,7 @@ export default function Post({ isAuthor, userName, id, content: initialContent, 
                   </>
                 )}
               </DisclosureButton>
-              <DisclosurePanel className="mt-4">
+              <DisclosurePanel className="mt-4 h-64 overflow-y-auto p-2">
                 {comments && comments.length === 0 ? (
                   <div>No comments yet</div>
                 ) : (

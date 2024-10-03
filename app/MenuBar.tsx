@@ -14,13 +14,10 @@ const MenuBar = () => {
   const [isOpenLogin, setIsOpenLogin] = useState(false);
   const [isOpenSignup, setIsOpenSignup] = useState(false);
 
-  function filterEmail(email: string) {
-    return email.split('@')[0];
-  }
 
   return (
     <>
-      <Menu as="div" className="fixed right-0 m-3 z-10">
+      <Menu as="div" className="fixed right-5 top-8 z-30">
         <div>
           <MenuButton className="flex items-center justify-center w-10 h-10 rounded-full border shadow-sm bg-white text-gray-700 hover:bg-gray-100 transition duration-200">
             <Bars3Icon className="w-6 h-6" />

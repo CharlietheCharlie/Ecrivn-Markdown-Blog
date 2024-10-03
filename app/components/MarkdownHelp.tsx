@@ -7,18 +7,18 @@ const markdownSyntax = `
 # Markdown Syntax Guide
 
 ## Headers
-- \`# H1\`
-- \`## H2\`
-- \`### H3\`
+- # H1
+- ## H2
+- ### H3
 
 ## Lists
-- \`- List item\`
-- \`1. Ordered list item\`
+- - List item
+- 1. Ordered list item
 
 ## Formatting
-- **Bold:** \`**bold**\`
-- *Italic:* \`*italic*\`
-- [Link](https://example.com): \`[Link](https://example.com)\`
+- **Bold:** bold
+- *Italic:* italic
+- [Link](https://example.com)
 
 ## Code Block
 \`\`\`javascript
@@ -26,7 +26,7 @@ console.log('Hello, world!');
 \`\`\`
 
 ## Images
-- \`![Alt Text](image_url)\`
+- ![Alt Text](image_url)
 `;
 
 export default function MarkdownHelp() {
