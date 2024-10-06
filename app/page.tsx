@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TextPlugin } from "gsap/TextPlugin"; // 引入 TextPlugin
 import HomePageImage from "./HomePageImage";
+import Link from "next/link";
 
 gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
@@ -123,7 +124,9 @@ export default function Home() {
 
           <div ref={buttonRef} className="mt-6">
             <button className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors">
+              <Link href="/highlights">
               Go Explore
+              </Link>
             </button>
           </div>
         </div>
