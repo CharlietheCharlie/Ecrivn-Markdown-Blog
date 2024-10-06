@@ -13,7 +13,7 @@ const merriweather = Merriweather({ subsets: ['latin'], weight: '700' });
 
 export default function Home() {
   const imgRef = useRef(null);
-  const textRef = useRef(null); // 綁定文字的 ref
+  const textRef = useRef<HTMLDivElement | null>(null); // 綁定文字的 ref
   const markdownRef = useRef(null); // 綁定 markdown 單詞的 ref
   const cursorRef = useRef(null); // 綁定 cursor 的 ref
   const buttonRef = useRef(null); // 綁定按鈕的 ref
