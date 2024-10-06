@@ -1,8 +1,7 @@
 import { firestore } from "@/lib/firebase";
 import { NextResponse } from "next/server";
-import { Timestamp } from "firebase-admin/firestore"; // 使用 Firebase 的 Timestamp
+import { Timestamp } from "firebase-admin/firestore"; 
 
-// 處理 GET 請求
 export async function GET(request: Request, { params }: { params: { roomId: string } }) {
     const { roomId } = params;
 
@@ -15,7 +14,6 @@ export async function GET(request: Request, { params }: { params: { roomId: stri
             const data = doc.data();
             return {
                 ...data,
-                // 將 Firestore Timestamp 轉換成 ISO 字符串
                 timestamp: data.timestamp.toDate().toISOString(),
             };
         });
@@ -27,7 +25,6 @@ export async function GET(request: Request, { params }: { params: { roomId: stri
     }
 }
 
-// 處理 POST 請求
 export async function POST(request: Request, { params }: { params: { roomId: string } }) {
     const { roomId } = params;
     const body = await request.json();
@@ -38,7 +35,6 @@ export async function POST(request: Request, { params }: { params: { roomId: str
             roomId,
             sender,
             message,
-            // 使用 Firestore 自己的 Timestamp 來儲存時間
             timestamp: Timestamp.now(),
         });
         return NextResponse.json({ success: true });
