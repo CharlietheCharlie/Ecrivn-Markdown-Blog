@@ -11,6 +11,7 @@ import useViewport from '../hooks/useViewport';
 import { useSession } from 'next-auth/react';
 import toast, { Toaster } from 'react-hot-toast';
 import MarkdownHelp from '../components/MarkdownHelp';
+import Image from 'next/image';
 
 type Comment = {
   id: string;
@@ -22,10 +23,11 @@ type Comment = {
 type Props = {
   isAuthor: boolean;
   userName: string;
+  userImage?: string;
   id: string;
   content: string;
   createdAt: string;
-  commentCount: number;  
+  commentCount: number;
 };
 
 const options = {
@@ -35,7 +37,7 @@ const options = {
   },
 };
 
-export default function Post({ isAuthor, userName, id, content: initialContent, createdAt, commentCount: initialCommentCount }: Props) {
+export default function Post({ isAuthor, userName, userImage, id, content: initialContent, createdAt, commentCount: initialCommentCount }: Props) {
   const contentRef = useRef<HTMLDivElement>(null);
   const { viewportHeight } = useViewport();
   const { data: session } = useSession();
@@ -46,7 +48,7 @@ export default function Post({ isAuthor, userName, id, content: initialContent, 
   const [isExtend, setIsExtend] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
-  
+
 
   const [commentCount, setCommentCount] = useState(initialCommentCount);
   const [hasLoadedComments, setHasLoadedComments] = useState(false);
@@ -118,7 +120,7 @@ export default function Post({ isAuthor, userName, id, content: initialContent, 
       const comment = await response.json();
       setComments([...comments, comment]);
       setNewComment('');
-      setCommentCount(commentCount + 1);  
+      setCommentCount(commentCount + 1);
       toast.success('Comment added successfully!');
     } else {
       toast.error('Failed to add the comment. Please try again.');
@@ -128,6 +130,23 @@ export default function Post({ isAuthor, userName, id, content: initialContent, 
   return (
     <div className="post-container mb-8">
       <Toaster />
+
+
+      <div className="flex items-center gap-3 p-2 bg-gray-100 dark:bg-gray-800 rounded-t-lg">
+        <div className="w-10 h-10 overflow-hidden rounded-full">
+          <Image
+            src={userImage || '/default-profile.png'}
+            alt={`${userName}'s profile picture`}
+            width={40}
+            height={40}
+            className="object-cover w-full h-full"
+          />
+        </div>
+        <div>
+          <h3 className="font-semibold text-md text-gray-800 dark:text-white">{userName}</h3>
+        </div>
+      </div>
+
       <div
         className="overflow-hidden transition-all duration-700 ease-in-out bg-white dark:bg-gray-900 shadow-lg rounded-lg"
         style={{
@@ -146,7 +165,7 @@ export default function Post({ isAuthor, userName, id, content: initialContent, 
             </button>
           </div>
         )}
-        
+
         <div onClick={toggleHeight} className="p-6 cursor-pointer">
           {isEditing ? (
             <textarea
@@ -191,12 +210,12 @@ export default function Post({ isAuthor, userName, id, content: initialContent, 
 
       <div className="mt-6">
         <h3 className="text-lg font-semibold mb-4">Comments ({commentCount || 0})</h3>
-        
+
         <Disclosure>
           {({ open }) => (
             <>
               <DisclosureButton
-                onClick={loadComments} 
+                onClick={loadComments}
                 className="px-4 py-2 flex items-center gap-2 bg-gray-800 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 {open ? (

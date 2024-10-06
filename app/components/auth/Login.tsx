@@ -30,10 +30,9 @@ const Login = () => {
     });
 
     if (result?.error) {
-      toast.error("Invalid email or password");
+      toast.error(result.error);
     } else {
       toast.success("Login successful");
-      
       router.push('/highlights');
     }
   };

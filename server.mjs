@@ -1,8 +1,6 @@
 import { createServer } from "node:http";
 import next from "next";
 import { Server } from "socket.io";
-import { resolve } from "path";  // 引入 path 模組
-
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
 const port = 3000;
@@ -24,11 +22,12 @@ app.prepare().then(() => {
     });
 
     socket.on("privateMessage", async (msg) => {
-      const { roomId, sender, message } = msg;
+      const { roomId, sender, message, recipientId, timestamp } = msg;
       console.log(`Private message from ${sender.id}: ${message}`);
-      io.to(roomId).emit("newMessage", { sender, message });
 
-    });
+      io.to(roomId).emit("newMessage", { sender, message, timestamp });
+      io.to(recipientId).emit("newMessage", { sender, message, timestamp }); 
+  });
 
     socket.on("disconnect", ( reason) => {
       console.log("Client disconnected" + socket.id + reason);

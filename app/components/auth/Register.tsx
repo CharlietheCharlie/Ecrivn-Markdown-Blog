@@ -15,6 +15,7 @@ const userRegisterValidation = z.object({
 const Register = () => {
   const router = useRouter();
   const [nameAvailable, setNameAvailable] = useState(true);
+  const [isRegistering, setIsRegistering] = useState(false);
   const form = useForm<z.infer<typeof userRegisterValidation>>({
     resolver: zodResolver(userRegisterValidation),
     defaultValues: {
@@ -56,6 +57,7 @@ const Register = () => {
       return;
     }
 
+    setIsRegistering(true);
     try {
       const response = await fetch('/api/register', {
         method: 'POST',
@@ -70,11 +72,12 @@ const Register = () => {
         toast.error(errorData.message); 
         return;
       }else{
-        toast.success("Registration successful");
+        toast.success("Registration successful! Please check your email for verification.");
       }
     } catch (error) {
       toast.error("Something went wrong");
     }
+    setIsRegistering(false);
   };
 
   return (
@@ -105,13 +108,14 @@ const Register = () => {
         />
         {form.formState.errors.password && <span className="text-red-500 text-sm">{form.formState.errors.password.message}</span>}
       </div>
-      <button 
+      {isRegistering && <div className="text-center">Registering...</div>}
+      {!isRegistering && <button 
         type="submit"
         className={`w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors duration-300 ${!nameAvailable ? "cursor-not-allowed opacity-50" : ""}`}
         disabled={!nameAvailable}
       >
         Register
-      </button>
+      </button>}
     </form>
   );
 };
