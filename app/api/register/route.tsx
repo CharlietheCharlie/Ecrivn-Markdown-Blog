@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     const uid = userRef.id;
 
     const token = uuidv4();
-    const verificationLink = `${process.env.NEXT_PUBLIC_API_URL}/verify?token=${token}`;  
+    const verificationLink = `${process.env.NEXT_PUBLIC_API_URL}                      /api/verify                                                     ?token=${token}`;  
 
     await firestore.collection("users").doc(uid).set({
       id: uid,
