@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { firestore } from '@/lib/firebase';
 
+
 export async function GET(request: NextRequest) {
     try {
-        const token = request.nextUrl.searchParams.get('token');
+        const { searchParams } = new URL(request.url);
+        const token = searchParams.get('token');
 
         if (!token) {
             return NextResponse.json({ error: 'No token provided' }, { status: 400 });
