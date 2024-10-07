@@ -5,9 +5,10 @@ interface Props {
     reset: () => void;
 }
 const ErrorPage = ({ error, reset }: Props) => {
+    const errorMessage = error.message
     return (
         <>
-            <div>An expected errro has occured.</div>
+            <div>Error: {errorMessage}</div>
             <button className='btn btn-primary' onClick={() => reset()}>Retry</button>
         </>
 

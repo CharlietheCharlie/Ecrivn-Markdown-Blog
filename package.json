@@ -18,6 +18,8 @@
     "@next/mdx": "^14.2.5",
     "@react-email/components": "^0.0.25",
     "@types/mdx": "^2.0.13",
+    "@upstash/ratelimit": "^2.0.3",
+    "@upstash/redis": "^1.34.2",
     "bcrypt": "^5.1.1",
     "firebase": "^10.12.5",
     "firebase-admin": "^12.5.0",

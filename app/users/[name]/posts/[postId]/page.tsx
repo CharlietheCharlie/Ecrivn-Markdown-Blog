@@ -27,7 +27,7 @@ export default function PostPage({ params: { id, postId } }: Props) {
     const [mdxSource, setMdxSource] = useState<MDXRemoteSerializeResult | null>(null);
     useEffect(() => {
         const fetchData = async () => {
-            const res = await fetch(`http://localhost:3000/api/users/${id}/posts/${postId}`);
+            const res = await fetch(`/api/users/${id}/posts/${postId}`);
             const content = await res.json();
             const mdxSource = await serialize(content, options);
             setContent(content);
