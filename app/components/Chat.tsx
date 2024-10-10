@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import io, { Socket } from "socket.io-client";
 import { useSession } from "next-auth/react";
 import { EllipsisVerticalIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { Disclosure, DisclosureButton, DisclosurePanel, Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
@@ -19,7 +18,6 @@ interface User {
     image: string;
 }
 
-let socket: Socket | null = null;
 
 export default function Chat() {
     const { data: session } = useSession();
@@ -30,38 +28,7 @@ export default function Chat() {
     const [selectedTab, setSelectedTab] = useState<number>(0); 
     const [unreadMessages, setUnreadMessages] = useState<{ [key: string]: boolean }>({}); // 用來追蹤未讀訊息
 
-    useEffect(() => {
-        if (session?.user && !socket) {
-            socket = io(); 
-            socket.emit("join", session.user);
-
-            socket.on("connect", () => {
-                console.log("Socket connected:", socket?.id);
-            });
-
-            socket.on("newMessage", (data) => {
-                if (data && data.sender && data.message) {
-                    const senderId = data.sender.id;
-                    
-                    if (senderId === session?.user?.id) {
-                        return;
-                    }
-                    setMessages((prevMessages) => [
-                        ...prevMessages,
-                        { sender: data.sender.name, message: data.message, timestamp: data.timestamp },
-                    ]);
-
-                    setUnreadMessages((prev) => ({ ...prev, [senderId]: true }));
-                } else {
-                    console.error("Invalid message data received:", data);
-                }
-            });
-
-            socket.on("disconnect", () => {
-                console.log("Socket disconnected");
-            });
-        }
-    }, [session]);
+    
 
     const searchUsers = async (name: string): Promise<void> => {
         if (!name) return;
@@ -73,7 +40,6 @@ export default function Chat() {
     const joinRoom = async (recipient: { id: string; name: string; image: string }) => {
         try {
             const roomId = [session?.user?.id, recipient.id].sort().join("_");
-            socket?.emit("joinRoom", roomId);
 
             setRecipient(recipient); 
             setUnreadMessages((prev) => ({ ...prev, [recipient.id]: false })); 
@@ -92,12 +58,7 @@ export default function Chat() {
                 const roomId = [session?.user?.id, recipient.id].sort().join("_");
                 const timestamp = new Date().toISOString(); 
 
-                socket?.emit("privateMessage", {
-                    roomId,
-                    sender: { id: session?.user?.id, name: session?.user?.name },
-                    message,
-                    timestamp, 
-                });
+            
 
                 const res = await fetch(`/api/messages/${roomId}`, {
                     method: "POST",
