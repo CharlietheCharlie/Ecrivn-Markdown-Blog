@@ -6,7 +6,7 @@ export async function POST(req: NextRequest, { params }: { params: { roomId: str
     const { roomId } = params;
     const { userId, userName, userImage, recipientId, recipientName, recipientImage } = await req.json();
 
-    if (!userId || !userName || !userImage || !recipientId || !recipientName || !recipientImage) {
+    if (!userId || !userName  || !recipientId || !recipientName) {
         return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
     try {
