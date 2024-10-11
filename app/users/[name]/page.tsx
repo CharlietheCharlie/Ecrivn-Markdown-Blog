@@ -8,16 +8,9 @@ import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
-type Post = {
-  id: string;
-  content: string;
-  createdAt: string;
-  userName: string;
-  commentCount: number;
-};
+import type { TPost } from '@/types/post';
 
-
-async function fetchUserPosts(name: string, page: number): Promise<Post[]> {
+async function fetchUserPosts(name: string, page: number): Promise<TPost[]> {
   const res = await fetch(`/api/users/${name}/posts?page=${page}&limit=5`);
   if (!res.ok) {
     throw new Error('Failed to fetch posts');
@@ -54,7 +47,7 @@ export default function UserPage({ params }: { params: { name: string } }) {
     fetchInitialData();
   }, [params.name, session, status, router]);
 
-  const { items: posts, isLoading, hasMore, loaderRef } = useInfiniteScroll<Post>(
+  const { items: posts, isLoading, hasMore, loaderRef } = useInfiniteScroll<TPost>(
     (page) => fetchUserPosts(params.name, page),
     1,
     5
@@ -64,7 +57,7 @@ export default function UserPage({ params }: { params: { name: string } }) {
     <div className="pt-5 px-4 max-w-5xl mx-auto">
       {isAuthor && <NewPost userName={params.name} />}
       <div className="space-y-10">
-        {posts.map((post: Post) => (
+        {posts.map((post: TPost) => (
           <Post isAuthor={isAuthor} key={post.id} {...post} />
         ))}
       </div>

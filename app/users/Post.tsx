@@ -13,12 +13,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import MarkdownHelp from '../components/MarkdownHelp';
 import Image from 'next/image';
 
-type Comment = {
-  id: string;
-  userName: string;
-  content: string;
-  createdAt: string;
-};
+import type { TComment } from '@/types/post';
 
 type Props = {
   isAuthor: boolean;
@@ -46,7 +41,7 @@ export default function Post({ isAuthor, userName, userImage, id, content: initi
   const [mdxSource, setMdxSource] = useState<MDXRemoteSerializeResult | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isExtend, setIsExtend] = useState(false);
-  const [comments, setComments] = useState<Comment[]>([]);
+  const [comments, setComments] = useState<TComment[]>([]);
   const [newComment, setNewComment] = useState('');
 
 

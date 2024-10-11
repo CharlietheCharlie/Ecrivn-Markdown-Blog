@@ -3,35 +3,16 @@ import { database } from "@/lib/firebase-client";
 import { ref, onValue } from "firebase/database";
 import { useSession } from "next-auth/react";
 
-type User = {
-    id: string;
-    name: string;
-    image: string;
-};
-
-type Message = {
-    sender: string;
-    message: string;
-    timestamp: string;
-};
-
-type Rooms = { 
-    recipientId: string;
-    recipientName: string;
-    recipientImage: string;
-    lastMessage: string;
-    lastMessageTimestamp: string;
-    unreadMessages: boolean;
-}   
+import type { TMessage, TUser, TRoom } from "@/types/chat";
 
 export const useChat = () => {
     const realtimeDb = database;
     const { data: session } = useSession();
-    const [messages, setMessages] = useState<{ [key: string]: Message[] }>({});
+    const [messages, setMessages] = useState<{ [key: string]: TMessage[] }>({});
     const [unreadMessages, setUnreadMessages] = useState<{ [key: string]: boolean }>({});
-    const [recipient, setRecipient] = useState<User | null>(null);
+    const [recipient, setRecipient] = useState<TUser | null>(null);
     const [message, setMessage] = useState<string>("");
-    const [rooms, setRooms] = useState<Rooms[]>([]);
+    const [rooms, setRooms] = useState<TRoom[]>([]);
 
     const listenForNewMessages = useCallback((roomId: string) => {
         const messagesRef = ref(realtimeDb, `messages/${roomId}`);
@@ -80,7 +61,7 @@ export const useChat = () => {
     }, [session?.user?.id, realtimeDb]);
     
 
-    const joinRoom = async (recipient: User) => {
+    const joinRoom = async (recipient: TUser) => {
         try {
             const roomId = [session?.user?.id, recipient.id].sort().join("_");
 

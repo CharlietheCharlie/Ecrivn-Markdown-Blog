@@ -88,7 +88,6 @@ export default function Chat() {
                                 </TabList>
 
                                 <TabPanels>
-                                    {/* 顯示當前房間的對話 */}
                                     <TabPanel>
                                         {recipient && <h4 className="mb-2">Chatting with: {recipient.name}</h4>}
                                         <div className="h-40 overflow-y-scroll mb-4">

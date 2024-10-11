@@ -19,11 +19,11 @@ export async function POST(req: NextRequest, { params }: { params: { roomId: str
                 participants: {
                     [userId]: {
                         name: userName,
-                        image: userImage
+                        image: userImage || "",
                     },
                     [recipientId]: {
                         name: recipientName,
-                        image: recipientImage
+                        image: recipientImage || "",
                     }
                 }
             });
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest, { params }: { params: { roomId: str
         await set(userRoomRef, {
             recipientId: recipientId,
             recipientName: recipientName,
-            recipientImage: recipientImage,
+            recipientImage: recipientImage || "",
             lastMessage: "",  
             lastMessageTimestamp: "",
             unreadMessages: false,
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest, { params }: { params: { roomId: str
         await set(recipientRoomRef, {
             recipientId: userId,
             recipientName: userName,
-            recipientImage: userImage, 
+            recipientImage: userImage || "", 
             lastMessage: "",
             lastMessageTimestamp: "",
             unreadMessages: false,
@@ -52,5 +52,31 @@ export async function POST(req: NextRequest, { params }: { params: { roomId: str
         return NextResponse.json({ success: true });
     } catch (error) {
         return NextResponse.json({ error: "Failed to create room" }, { status: 500 });
+    }
+}
+
+export async function PUT(req: NextRequest, { params }: { params: { roomId: string } }) {
+    const { roomId } = params;
+    const { lastMessage, lastMessageTimestamp, userId, recipientId, unreadMessagesForUser, unreadMessagesForRecipient } = await req.json();
+
+    try {
+
+        const userRoomRef = ref(database, `users/${userId}/rooms/${roomId}`);
+        await set(userRoomRef, {
+            lastMessage,
+            lastMessageTimestamp,
+            unreadMessages: unreadMessagesForUser,
+        });
+
+        const recipientRoomRef = ref(database, `users/${recipientId}/rooms/${roomId}`);
+        await set(recipientRoomRef, {
+            lastMessage,
+            lastMessageTimestamp,
+            unreadMessages: unreadMessagesForRecipient,
+        });
+
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        return NextResponse.json({ error: "Failed to update room" }, { status: 500 });
     }
 }

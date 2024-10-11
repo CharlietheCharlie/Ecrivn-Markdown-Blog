@@ -4,16 +4,9 @@ import Post from '@/app/users/Post';
 import Navigator from '@/app/components/Navigator';
 import { useInfiniteScroll } from '@/app/hooks/useInfiniteScroll';
 import { useEffect, useState } from 'react';
+import type { TPost } from '@/types/post';
 
-type Post = {
-  id: string;
-  content: string;
-  createdAt: string;
-  userName: string;
-  commentCount: number;
-};
-
-async function fetchRecentPosts(page: number): Promise<Post[]> {
+async function fetchRecentPosts(page: number): Promise<TPost[]> {
   const res = await fetch(`/api/posts/highlights?page=${page}&limit=5`); 
   if (!res.ok) {
     throw new Error('Failed to fetch recent posts');
@@ -23,7 +16,7 @@ async function fetchRecentPosts(page: number): Promise<Post[]> {
 }
 
 export default function HighlightsPage() {
-  const { items: posts, isLoading, hasMore, loaderRef } = useInfiniteScroll<Post>(
+  const { items: posts, isLoading, hasMore, loaderRef } = useInfiniteScroll<TPost>(
     (page) => fetchRecentPosts(page),
     1,
     5
@@ -32,7 +25,7 @@ export default function HighlightsPage() {
   return (
     <div className="pt-5 px-4 max-w-5xl mx-auto">
       <div className="space-y-10">
-        {posts.map((post: Post) => (
+        {posts.map((post: TPost) => (
           <Post isAuthor={false} key={post.id} {...post} />
         ))}
       </div>
