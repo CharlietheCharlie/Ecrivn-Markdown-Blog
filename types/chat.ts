@@ -20,11 +20,9 @@ type TUser = {
 };
 
 type TChatState = {
-  messages: { [key: string]: TMessage[] };
   unreadMessages: { [key: string]: boolean };
-  recipient: TUser | null;
   rooms: TRoom[];
-  message: string;
+  messages: { [key: string]: TMessage };
 };
 
 

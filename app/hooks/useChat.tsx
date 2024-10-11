@@ -1,130 +1,77 @@
-import { useState, useEffect, useCallback } from "react";
-import { database } from "@/lib/firebase-client";
-import { ref, onValue } from "firebase/database";
-import { useSession } from "next-auth/react";
-
-import type { TMessage, TUser, TRoom } from "@/types/chat";
+// useChat.ts
+import { useSelector, useDispatch } from 'react-redux';
+import { joinRoom, listenForMessages, fetchUserRooms } from '../store/chatAction';
+import { useSession } from 'next-auth/react';
+import { TChatState, TUser } from '@/types/chat';
+import { useEffect, useState } from 'react';
+import { AppDispatch } from '../store/store';
 
 export const useChat = () => {
-    const realtimeDb = database;
+    const dispatch = useDispatch<AppDispatch>();
     const { data: session } = useSession();
-    const [messages, setMessages] = useState<{ [key: string]: TMessage[] }>({});
-    const [unreadMessages, setUnreadMessages] = useState<{ [key: string]: boolean }>({});
+    const { rooms, unreadMessages, messages } = useSelector((state: any) => state.chat) as TChatState;
+
+    const [message, setMessage] = useState('');
     const [recipient, setRecipient] = useState<TUser | null>(null);
-    const [message, setMessage] = useState<string>("");
-    const [rooms, setRooms] = useState<TRoom[]>([]);
-
-    const listenForNewMessages = useCallback((roomId: string) => {
-        const messagesRef = ref(realtimeDb, `messages/${roomId}`);
-        onValue(messagesRef, (snapshot) => {
-            const messages = snapshot.val();
-            if (messages) {
-                const loadedMessages = Object.keys(messages).map((key) => ({
-                    ...messages[key],
-                    id: key,
-                }));
-
-                loadedMessages.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-
-                setMessages((prevMessages) => ({
-                    ...prevMessages,
-                    [roomId]: loadedMessages,
-                }));
-
-                setUnreadMessages((prevUnreadMessages) => ({
-                    ...prevUnreadMessages,
-                    [roomId]: true,
-                }));
-            }
-        });
-    }, [realtimeDb]);
-
+    const [currentRoomId, setCurrentRoomId] = useState<string>('');
 
     useEffect(() => {
         if (session?.user?.id) {
-            const userRoomsRef = ref(realtimeDb, `users/${session?.user?.id}/rooms`);
-            onValue(userRoomsRef, (snapshot) => {
-                const rooms = snapshot.val();
-                if (rooms) {
-                    const loadedRooms = Object.keys(rooms).map((key) => ({
-                        recipientId: rooms[key].recipientId,
-                        recipientName: rooms[key].recipientName,
-                        recipientImage: rooms[key].recipientImage,
-                        lastMessage: rooms[key].lastMessage,
-                        lastMessageTimestamp: rooms[key].lastMessageTimestamp,
-                        unreadMessages: rooms[key].unreadMessages
-                    }));
-                    setRooms(loadedRooms);
-                }
-            });
+            dispatch(fetchUserRooms(session.user.id));
         }
-    }, [session?.user?.id, realtimeDb]);
-    
+    }, [session, dispatch]);
 
-    const joinRoom = async (recipient: TUser) => {
-        try {
-            const roomId = [session?.user?.id, recipient.id].sort().join("_");
-
-            setRecipient(recipient);
-
-            const res = await fetch(`/api/rooms/${roomId}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    userId: session?.user?.id,
-                    userName: session?.user?.name,
-                    userImage: session?.user?.image,
-                    recipientId: recipient.id,
-                    recipientName: recipient.name,
-                    recipientImage: recipient.image,
-                }),
-            });
-
-            if (!res.ok) throw new Error("Failed to join room");
-
-            listenForNewMessages(roomId); 
-        } catch (error) {
-            console.error("Failed to join room:", error);
+    const handleJoinRoom = (selectedRecipient: TUser) => {
+        setRecipient(selectedRecipient);
+        if (session?.user) {
+            dispatch(joinRoom({ session: { user: session.user as TUser }, recipient: selectedRecipient }));
+            const roomId = [session.user.id, selectedRecipient.id].sort().join("_");
+            setCurrentRoomId(roomId);
+            handleListenForMessages(roomId);
         }
     };
 
-    const sendMessage = async () => {
-        if (message.trim() && recipient) {
+    const handleSendMessage = async () => {
+        if (message.trim() && session?.user && recipient) {
+            const roomId = [session.user.id, recipient.id].sort().join("_");
+
             try {
-                const roomId = [session?.user?.id, recipient.id].sort().join("_");
-    
                 const res = await fetch(`/api/messages/${roomId}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        senderId: session?.user?.id,
+                        senderId: session.user.id,
                         message,
                     }),
                 });
-    
-                if (!res.ok) throw new Error("Failed to send message");
-    
-                setMessage("");  
+
+                if (!res.ok) throw new Error("Error sending message");
+
+                setMessage(''); 
             } catch (error) {
-                console.error("Failed to send message:", error);
+                console.error("Error：", error);
             }
         }
     };
-    
+
+    const handleListenForMessages = (roomId: string) => {
+        dispatch(listenForMessages(roomId));
+    };
+
+    const currentMessages = messages[currentRoomId] || [];
 
     return {
-        messages, 
-        unreadMessages,
-        joinRoom,
-        sendMessage,
-        message,
-        setMessage, 
+        messages: currentMessages,
         recipient,
+        message,
+        rooms,
+        unreadMessages,
+        setMessage,
         setRecipient,
-        rooms, 
+        joinRoom: handleJoinRoom,
+        sendMessage: handleSendMessage,
+        listenForMessages: handleListenForMessages,
     };
 };

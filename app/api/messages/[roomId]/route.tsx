@@ -2,7 +2,7 @@ import { database } from "@/lib/firebase-client";
 import { ref, push, get } from "firebase/database";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: Request, { params }: { params: { roomId: string } }) {
+export async function GET(request: NextRequest, { params }: { params: { roomId: string } }) {
     const { roomId } = params;
 
     try {
@@ -22,9 +22,14 @@ export async function POST(request: NextRequest, { params }: { params: { roomId:
     const body = await request.json();
     const { senderId, message } = body;
 
+    if (!senderId || !message) {
+        return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    }
+
+
 
     try {
-        const messageRef = ref (database, `messages/${roomId}`);
+        const messageRef = ref(database, `messages/${roomId}`);
         await push(messageRef, {
             senderId,
             message,

@@ -1,48 +1,50 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { database } from "@/lib/firebase-client";
-import { ref, onValue } from "firebase/database";
-import { loadRooms } from './chatAction';
+// chatSlice.ts
+import { createSlice } from '@reduxjs/toolkit';
+import { joinRoom } from './chatAction';
 import type { TChatState } from '@/types/chat';
 
 const initialState: TChatState = {
-  messages: {},
-  unreadMessages: {},
-  recipient: null,
   rooms: [],
-  message: "",
+  unreadMessages: {},
+  messages: {}, // 添加 messages 到初始状态
 };
-
-
 
 const chatSlice = createSlice({
   name: 'chat',
   initialState,
   reducers: {
-    setMessage(state, action) {
-      state.message = action.payload;
+    setRooms(state, action) {
+      state.rooms = action.payload;
     },
-    setRecipient(state, action) {
-      state.recipient = action.payload;
+    setUnreadMessages(state, action) {
+      state.unreadMessages = action.payload;
     },
     setMessages(state, action) {
       const { roomId, messages } = action.payload;
       state.messages[roomId] = messages;
     },
-    setUnreadMessages(state, action) {
-      const { roomId, unread } = action.payload;
-      state.unreadMessages[roomId] = unread;
-    },
-    setRooms(state, action) {
-      state.rooms = action.payload;
-    },
   },
   extraReducers: (builder) => {
-    builder.addCase(loadRooms.fulfilled, (state, action) => {
-      state.rooms = action.payload;
-    });
-  }
+    builder
+      .addCase(joinRoom.fulfilled, (state, action) => {
+        const { recipient } = action.payload;
+        const roomExists = state.rooms.some(room => room.recipientId === recipient.id);
+        if (!roomExists) {
+          state.rooms.push({
+            recipientId: recipient.id,
+            recipientName: recipient.name,
+            recipientImage: recipient.image,
+            lastMessage: '',
+            lastMessageTimestamp: '',
+            unreadMessages: false,
+          });
+        }
+      })
+      .addCase(joinRoom.rejected, (state) => {
+        console.log('Error joining room');
+      });
+  },
 });
 
-export const { setMessage, setRecipient, setMessages, setUnreadMessages, setRooms } = chatSlice.actions;
-
+export const { setRooms, setUnreadMessages, setMessages } = chatSlice.actions;
 export default chatSlice.reducer;

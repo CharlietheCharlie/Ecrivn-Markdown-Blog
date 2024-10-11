@@ -8,6 +8,7 @@ import { ThemeProvider } from './components/theme-provider';
 import Footer from './Footer';
 import Logo from './Logo';
 import Chat from './components/Chat';
+import StoreProvider from './StoreProvider';
 
 const genyo = localFont({ src: '../public/fonts/GenYoGothicTW-M-01.ttf', variable: '--font-genyo' })
 
@@ -45,13 +46,15 @@ export default function RootLayout({
         >
           <SessionProvider>
             <div className="flex flex-col min-h-screen">
-              <Logo/>
-              <Menu />
-              <main className="flex-grow container mx-auto py-20">
-                <Toaster position="top-center" />
-                {children}
-              </main>
-              <Chat/>
+              <Logo />
+              <StoreProvider>
+                <Menu />
+                <main className="flex-grow container mx-auto py-20">
+                  <Toaster position="top-center" />
+                  {children}
+                </main>
+                <Chat />
+              </StoreProvider>
               <Footer />
             </div>
           </SessionProvider>

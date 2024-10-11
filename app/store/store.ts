@@ -1,10 +1,11 @@
-import { configureStore } from "@reduxjs/toolkit";
-import chatReducer from "./chatSlice";
-import thunk from "redux-thunk";
+import { configureStore } from '@reduxjs/toolkit';
+import chatReducer from './chatSlice';
 
-export default configureStore({
-    reducer: {
-        chat: chatReducer
-    },
-})
+export const store = configureStore({
+  reducer: {
+    chat: chatReducer,
+  },
+});
 
+export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<typeof store.getState>;
