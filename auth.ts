@@ -80,7 +80,7 @@ const authOptions: NextAuthConfig = {
           let isUnique = false;
           while (!isUnique) {
             const userSnapshotByName = await usersCollection
-              .where("name", "==", username)
+              .where("name_lowercase", "==", username?.toLowerCase())
               .limit(1)
               .get();
             if (userSnapshotByName.empty) {
@@ -96,6 +96,7 @@ const authOptions: NextAuthConfig = {
           await usersCollection.add({
             email: user.email,
             name: username,
+            name_lowercase: username && username.toLowerCase(),
             id: userRef.id,
             image: user.image,
             createdAt: new Date(),

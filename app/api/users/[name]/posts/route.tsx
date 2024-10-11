@@ -4,7 +4,7 @@ import { firestore } from "@/lib/firebase";
 export async function GET(request: NextRequest, { params }: { params: { name: string } }) {
     const { name } = params;
 
-    const userSnapshot = await firestore.collection("users").where("name", "==", name).limit(1).get();
+    const userSnapshot = await firestore.collection("users").where("name_lowercase", "==", name?.toLowerCase()).limit(1).get();
     if (userSnapshot.empty) {
         return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest, { params }: { params: { name: s
     }
   
     const usersCollection = firestore.collection("users");
-    const userSnapshot = await usersCollection.where("name", "==", name).limit(1).get();
+    const userSnapshot = await usersCollection.where("name_lowercase", "==", name?.toLowerCase()).limit(1).get();
   
     if (userSnapshot.empty) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });

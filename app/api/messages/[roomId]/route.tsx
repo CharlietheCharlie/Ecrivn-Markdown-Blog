@@ -1,22 +1,14 @@
-import { firestore } from "@/lib/firebase";
-import { NextResponse } from "next/server";
-import { Timestamp } from "firebase-admin/firestore"; 
+import { database } from "@/lib/firebase-client";
+import { ref, push, get } from "firebase/database";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: Request, { params }: { params: { roomId: string } }) {
     const { roomId } = params;
 
     try {
-        const messagesSnapshot = await firestore.collection('messages')
-            .where('roomId', '==', roomId)
-            .get();
-
-        const messages = messagesSnapshot.docs.map(doc => {
-            const data = doc.data();
-            return {
-                ...data,
-                timestamp: data.timestamp.toDate().toISOString(),
-            };
-        });
+        const messageRef = ref(database, `messages/${roomId}`);
+        const messagesSnapshot = await get(messageRef);
+        const messages = messagesSnapshot.val();
 
         return NextResponse.json({ messages });
     } catch (error) {
@@ -25,18 +17,19 @@ export async function GET(request: Request, { params }: { params: { roomId: stri
     }
 }
 
-export async function POST(request: Request, { params }: { params: { roomId: string } }) {
+export async function POST(request: NextRequest, { params }: { params: { roomId: string } }) {
     const { roomId } = params;
     const body = await request.json();
-    const { sender, message } = body;
+    const { senderId, message } = body;
+
 
     try {
-        await firestore.collection("messages").add({
-            roomId,
-            sender,
+        const messageRef = ref (database, `messages/${roomId}`);
+        await push(messageRef, {
+            senderId,
             message,
-            timestamp: Timestamp.now(),
-        });
+            timestamp: new Date().toISOString(),
+        })
         return NextResponse.json({ success: true });
     } catch (error) {
         console.error("Error sending message:", error);

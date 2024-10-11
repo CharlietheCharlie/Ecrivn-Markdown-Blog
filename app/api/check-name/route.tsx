@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ available: false, message: "Name is required" }, { status: 400 });
   }
 
-  const nameExist = await firestore.collection("users").where("name", "==", name).get();
+  const nameExist = await firestore.collection("users").where("name_lowercase", "==", name?.toLowerCase()).get();
 
   if (nameExist.size > 0) {
     return NextResponse.json({ available: false }, { status: 200 });

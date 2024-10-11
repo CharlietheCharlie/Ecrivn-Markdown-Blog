@@ -6,7 +6,8 @@ import schema from "../schema";
 export async function GET(request: NextRequest, { params }: { params: { name: string } }) {
     const { name } = params;
 
-    const userSnapshot = await firestore.collection("users").where("name", "==", name).get();
+
+    const userSnapshot = await firestore.collection("users").where("name_lowercase", "==", name.toLowerCase()).get();
 
     const user = userSnapshot.docs[0];
 
@@ -27,7 +28,7 @@ export async function PUT(
     if (!validation.success) {
         return NextResponse.json(validation.error.errors, { status: 400 })
     }
-    const user = await firestore.collection("users").where("name", "==", name).get();
+    const user = await firestore.collection("users").where("name_lowercase", "==", name.toLowerCase()).get();
     if (!user) {
         return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
@@ -41,7 +42,7 @@ export async function DELETE(
     request: NextRequest,
     { params }: { params: { name: string } }) {
     const { name } = params;
-    const user = await firestore.collection("users").where("name", "==", name).get();
+    const user = await firestore.collection("users").where("name_lowercase", "==", name.toLowerCase()).get();
     if (!user) {
         return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }

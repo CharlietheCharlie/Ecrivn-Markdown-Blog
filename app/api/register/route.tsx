@@ -29,7 +29,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "Email already exists" }, { status: 400 });
     }
 
-    const nameExist = await firestore.collection("users").where("name", "==", name).get();
+
+    const nameExist = await firestore.collection("users").where("name_lowercase", "==", name.toLowerCase()).get();
     if (nameExist.size > 0) {
       return NextResponse.json({ message: "Username already exists" }, { status: 400 });
     }
@@ -44,6 +45,7 @@ export async function POST(request: NextRequest) {
     await firestore.collection("users").doc(uid).set({
       id: uid,
       name,
+      name_lowercase: name && name.toLowerCase(),
       email,
       password: hashedPassword,
       active: false, 
