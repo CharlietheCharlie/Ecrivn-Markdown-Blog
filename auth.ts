@@ -74,6 +74,7 @@ const authOptions: NextAuthConfig = {
   },
   pages: {
     signIn: "/login",
+    signOut: "/",
   },
   callbacks: {
     async signIn({ user, account, profile }) {
@@ -144,6 +145,9 @@ const authOptions: NextAuthConfig = {
         image: userData.image,
       }
       return session
+    },
+    async redirect({ url, baseUrl }) {
+      return url.startsWith(baseUrl) ? url : baseUrl;
     },
   },
 };
