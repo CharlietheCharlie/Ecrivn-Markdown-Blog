@@ -18,13 +18,12 @@ const HomePageImage = () => {
     
     \`\`\`js
     function add(a, b) {
-    let result = a + b;
-    console.log(\`\${a} + \${b} = \${result},
-    isn't that cool? ✨\`);
-    return result;
+      let result = a + b;
+      console.log(result);
+      return result;
     }
     add(5, 3); 
-    // 5 + 3 = 8, isn't that cool? ✨
+    // 8, isn't that cool? ✨
     \`\`\`
     `;
 
@@ -49,45 +48,71 @@ const HomePageImage = () => {
 
     return (
         <div
-            className={`w-full h-full relative ${isFlipped ? 'flipped' : ''}`}
-            style={{
-                perspective: '1000px',
-                maxWidth: '600px',
-                height: 'auto',
-                aspectRatio: '7/9',
-            }}
+            className={`flipper-container ${isFlipped ? 'flipped' : ''}`}
+            style={{ perspective: '1000px', maxWidth: '600px' }}
         >
             <div className="flipper">
-                <article className="front prose prose-sm dark:prose-invert bg-white bg-opacity-30  p-5 rounded-lg">
+                <article className="front glassmorphism">
+                    <div className="markdown-content">
                     {mdxSource && <MDXRemote {...mdxSource} />}
+                    </div>
                 </article>
 
-                <article className="back prose prose-sm dark:prose-invert bg-white bg-opacity-30 overflow-hidden  rounded-lg">
-                    <div
-                        style={{
-                            whiteSpace: 'pre-wrap',
-                            wordBreak: 'break-word',
-                        }}
-                    >
+                <article className="back glassmorphism">
+                    <div className="markdown-content">
                         {homepageText}
                     </div>
                 </article>
             </div>
 
             <style jsx>{`
+                .flipper-container {
+                    width: 100%;
+                    height: auto;
+                    aspect-ratio: 7/9;
+                    position: relative;
+                }
+
                 .flipper {
                     position: relative;
                     width: 100%;
                     height: 100%;
                     transform-style: preserve-3d;
-                    transition: 0.6s;
+                    transition: transform 0.6s ease;
                 }
-                
-                
 
                 .flipped .flipper {
                     transform: rotateY(180deg);
                 }
+
+                .glassmorphism {
+                    backdrop-filter: blur(12px) saturate(180%);
+                    -webkit-backdrop-filter: blur(12px) saturate(180%);
+                    background: rgba(255, 255, 255, 0.15);
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    border-radius: 16px;
+                    box-shadow: 
+                        0 4px 6px rgba(0, 0, 0, 0.1), 
+                        0 1px 3px rgba(0, 0, 0, 0.1), 
+                        0 0 15px rgba(255, 255, 255, 0.3),  
+                        inset 0 0 8px rgba(255, 255, 255, 0.2);
+                    padding: 20px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    overflow: hidden;
+                    text-align: left;
+                    transition: box-shadow 0.4s ease, transform 0.4s ease;
+                }
+
+                .markdown-content {
+                    width: 100%;
+                    white-space: pre-wrap; 
+                    word-break: break-word;
+                    overflow-wrap: break-word; 
+                    line-height: 1.6;
+                }
+
 
                 .front,
                 .back {
@@ -95,11 +120,8 @@ const HomePageImage = () => {
                     width: 100%;
                     height: 100%;
                     backface-visibility: hidden;
+                    border-radius: 16px;
                     filter: drop-shadow(0 0 0.3rem rgba(0, 0, 0, 0.2));
-                    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5),    
-                    0 0 30px rgba(255, 255, 255, 0.3), 
-                    0 0 45px rgba(255, 255, 255, 0.1);
-                    border-radius: 10px;
                 }
 
                 .front {

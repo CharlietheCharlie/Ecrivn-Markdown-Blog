@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
         const userSnapshot = await firestore.collection('users').doc(data.userId).get();
         const userData = userSnapshot.data();
         const userName = userData?.name || 'Unknown';
-        const userImage = userData?.image || '/default-profile.png'; 
+        const userImage = userData?.image || null;  
         return {
             id: doc.id,
             ...data,

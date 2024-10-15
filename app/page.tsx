@@ -13,28 +13,27 @@ const merriweather = Merriweather({ subsets: ['latin'], weight: '700' });
 
 export default function Home() {
   const imgRef = useRef(null);
-  const textRef = useRef<HTMLDivElement | null>(null); // 綁定文字的 ref
-  const markdownRef = useRef(null); // 綁定 markdown 單詞的 ref
-  const cursorRef = useRef(null); // 綁定 cursor 的 ref
-  const buttonRef = useRef(null); // 綁定按鈕的 ref
-  const tl = useRef(gsap.timeline()); // GSAP 時間線
-
+  const textRef = useRef<HTMLDivElement | null>(null);
+  const markdownRef = useRef(null);
+  const cursorRef = useRef(null);
+  const buttonRef = useRef(null);
+  const tl = useRef(gsap.timeline());
   useEffect(() => {
     if (imgRef.current) {
       gsap.fromTo(
         imgRef.current,
-        { scale: 0.8, opacity: 0, y: 50 }, 
+        { scale: 0.8, opacity: 0, y: 50 },
         {
           scale: 1,
           opacity: 1,
-          y: 0, 
+          y: 0,
           duration: 1.5,
           ease: "power3.out",
           scrollTrigger: {
             trigger: imgRef.current,
             start: "top center",
             end: "bottom center",
-            scrub: true, // 滾動時平滑動畫
+            scrub: true,
           },
         }
       );
@@ -43,12 +42,12 @@ export default function Home() {
     if (markdownRef.current && cursorRef.current) {
       gsap.fromTo(
         markdownRef.current,
-        { text: "" }, 
+        { text: "" },
         {
-          text: "Markdown", 
+          text: "Markdown",
           duration: 2,
           ease: "power1.inOut",
-          delay: 1, 
+          delay: 1,
           onComplete: () => {
             gsap.to(cursorRef.current, { opacity: 0, duration: 0.5 });
           },
@@ -63,7 +62,7 @@ export default function Home() {
           duration: 0.5,
           ease: "power2.inOut",
           repeat: -1,
-          yoyo: true, 
+          yoyo: true,
         }
       );
     }
@@ -76,9 +75,9 @@ export default function Home() {
           {
             opacity: 1,
             y: 0,
-            duration: 1.5, 
+            duration: 1.5,
             ease: "power3.out",
-            stagger: 0.3, 
+            stagger: 0.3,
           }
         );
     }
@@ -90,13 +89,15 @@ export default function Home() {
         {
           opacity: 1,
           y: 0,
-          duration: 1, 
+          duration: 1,
           ease: "power3.out",
-          delay: 2, 
+          delay: 2,
         }
       );
     }
   }, []);
+
+
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-500">
@@ -116,16 +117,20 @@ export default function Home() {
             Welcome to Ecrivn
           </h1>
           <p className="hidden-text text-lg text-gray-600 dark:text-gray-400">
-            Here, you can easily share your life experiences 
+            Here, you can easily share your life experiences
           </p>
           <p className="hidden-text text-lg text-gray-600 dark:text-gray-400">
             and work using <span ref={markdownRef}></span><span ref={cursorRef} className="cursor">|</span> format.
           </p>
 
           <div ref={buttonRef} className="mt-6">
-            <button className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors">
+            <button
+              ref={buttonRef}
+              className="relative group px-6 py-3 bg-gradient-to-r from-blue-400 to-indigo-600 text-white font-semibold rounded-lg shadow-lg overflow-hidden transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl"
+            >
               <Link href="/highlights">
-              Go Explore
+                <span className="relative z-10">Go Explore</span>
+                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity"></div>
               </Link>
             </button>
           </div>
