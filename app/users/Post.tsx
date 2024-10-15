@@ -6,12 +6,13 @@ import '@/styles/highlight-js/hybrid.css';
 import rehypeHighlight from 'rehype-highlight';
 import remarkGfm from 'remark-gfm';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
-import { ChevronUpIcon, PencilIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { ChevronUpIcon, PencilIcon, PlusIcon, UserIcon } from '@heroicons/react/24/outline';
 import useViewport from '../hooks/useViewport';
 import { useSession } from 'next-auth/react';
 import toast, { Toaster } from 'react-hot-toast';
 import MarkdownHelp from '../components/MarkdownHelp';
 import Image from 'next/image';
+import ConfirmDialog from '../components/ConfirmDialog';
 
 import type { TComment } from '@/types/post';
 
@@ -47,6 +48,12 @@ export default function Post({ isAuthor, userName, userImage, id, content: initi
 
   const [commentCount, setCommentCount] = useState(initialCommentCount);
   const [hasLoadedComments, setHasLoadedComments] = useState(false);
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    description: 'Are you sure you want to delete this post?',
+    onConfirm: async () => {},
+    onCancel: () => setConfirmDialog((prev) => ({ ...prev, isOpen: false })),
+  });
 
   useEffect(() => {
     const initMdx = async () => {
@@ -73,6 +80,27 @@ export default function Post({ isAuthor, userName, userImage, id, content: initi
       toast.success('Post saved successfully!');
     } else {
       toast.error('Failed to save the post. Please try again.');
+    }
+  };
+
+  const confirmDelete = () => {
+    setConfirmDialog({
+      ...confirmDialog,
+      isOpen: true,
+      onConfirm: handleDelete,
+    });
+  };
+
+  const handleDelete = async () => {
+    const response = await fetch(`/api/users/${userName}/posts/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (response.ok) {
+      toast.success('Post deleted successfully!');
+      window.location.reload();
+    } else {
+      toast.error('Failed to delete the post. Please try again.');
     }
   };
 
@@ -129,13 +157,14 @@ export default function Post({ isAuthor, userName, userImage, id, content: initi
 
       <div className="flex items-center gap-3 p-2 bg-gray-100 dark:bg-gray-800 rounded-t-lg">
         <div className="w-10 h-10 overflow-hidden rounded-full">
-          <Image
-            src={userImage || '/default-profile.png'}
+          {!userImage && <UserIcon className="w-full h-full text-gray-400 bg-gray-200 dark:bg-gray-700 p-2" />}
+          {userImage && <Image
+            src={userImage}
             alt={`${userName}'s profile picture`}
             width={40}
             height={40}
             className="object-cover w-full h-full"
-          />
+          />}
         </div>
         <div>
           <h3 className="font-semibold text-md text-gray-800 dark:text-white">{userName}</h3>
@@ -190,6 +219,12 @@ export default function Post({ isAuthor, userName, userImage, id, content: initi
               Save
             </button>
             <button
+              onClick={confirmDelete}
+              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
+            >
+              Delete
+            </button>
+            <button
               onClick={cancelEdit}
               className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 text-sm"
             >
@@ -198,7 +233,7 @@ export default function Post({ isAuthor, userName, userImage, id, content: initi
           </div>
         )}
       </div>
-
+      <ConfirmDialog isOpen={confirmDialog.isOpen} description={confirmDialog.description} onConfirm={confirmDialog.onConfirm} onCancel={confirmDialog.onCancel} />
       <div className="text-sm text-gray-500 dark:text-gray-400 mt-2">
         Published on: {new Date(createdAt).toLocaleDateString()} at {new Date(createdAt).toLocaleTimeString()}
       </div>

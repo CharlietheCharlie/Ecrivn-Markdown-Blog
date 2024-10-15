@@ -1,4 +1,3 @@
-// chatSlice.ts
 import { createSlice } from '@reduxjs/toolkit';
 import { joinRoom } from './chatAction';
 import type { TChatState } from '@/types/chat';
@@ -6,7 +5,7 @@ import type { TChatState } from '@/types/chat';
 const initialState: TChatState = {
   rooms: [],
   unreadMessages: {},
-  messages: {}, // 添加 messages 到初始状态
+  messages: {}, 
 };
 
 const chatSlice = createSlice({

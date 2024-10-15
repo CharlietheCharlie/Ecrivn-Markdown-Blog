@@ -54,7 +54,7 @@ export async function POST(req: NextRequest, { params }: { params: { roomId: str
                 recipientImage: userImage || "",
                 lastMessage: "",
                 lastMessageTimestamp: "",
-                unreadMessages: false,
+                unreadMessages: true,
             });
         }
 

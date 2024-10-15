@@ -7,6 +7,7 @@ import { FirestoreAdapter } from "@auth/firebase-adapter";
 import { firestore } from "./lib/firebase";
 import Credentials from "next-auth/providers/credentials";
 
+
 const authOptions: NextAuthConfig = {
   adapter: FirestoreAdapter({ namingStrategy: "snake_case", firestore }),
   providers: [
@@ -44,6 +45,14 @@ const authOptions: NextAuthConfig = {
           );
           if (!isPasswordValid) {
             throw new Error("Invalid password");
+          }
+
+          if(!userData.name_lowercase){
+            const username = email.split("@")[0];
+            await usersCollection.doc(userDoc.id).update({
+              name: username,
+              name_lowercase: username && username.toLowerCase(),
+            });
           }
 
           return userData;

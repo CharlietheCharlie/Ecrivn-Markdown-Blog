@@ -75,10 +75,11 @@ export async function POST(request: NextRequest, { params }: { params: { name: s
     await postRef.set({
       id: postId,
       userId,
+      userName: name,
       content: body.content,
       createdAt: new Date().toISOString(),
     });
   
     return NextResponse.json({ success: true, postId });
-  }
+}
   

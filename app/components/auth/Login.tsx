@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 const userLoginValidation = z.object({
@@ -12,7 +11,6 @@ const userLoginValidation = z.object({
 });
 
 const Login = () => {
-  const router = useRouter();
   const form = useForm<z.infer<typeof userLoginValidation>>({
     resolver: zodResolver(userLoginValidation),
     defaultValues: {
@@ -33,7 +31,7 @@ const Login = () => {
       toast.error(result.error);
     } else {
       toast.success("Login successful");
-      router.push('/highlights');
+
     }
   };
 

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { DisclosureButton, DisclosurePanel, Disclosure } from '@headlessui/react';
 import { ChevronDownIcon, ChevronUpIcon, PencilIcon } from '@heroicons/react/24/outline';
+import toast from 'react-hot-toast';
 
 type NewPostProps = {
   userName: string;
@@ -28,9 +29,12 @@ const NewPost: React.FC<NewPostProps> = ({ userName }) => {
         console.error(errorData);
       } else {
         setContent('');
+        toast.success('Post published successfully!');
+        window.location.reload();
       }
     } catch (error) {
       console.error(error);
+      toast.error('Failed to publish the post. Please try again.');
     } finally {
       setIsLoading(false);
     }

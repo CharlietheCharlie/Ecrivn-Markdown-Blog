@@ -5,15 +5,21 @@ import { Menu, MenuButton, MenuItem, MenuItems, Transition, Dialog } from '@head
 import { Bars3Icon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import ThemeSwitch from './components/ThemeSwitch';
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
+import Image from 'next/image';
 
 const MenuBar = () => {
   const { status, data: session } = useSession();
   const [isOpenLogin, setIsOpenLogin] = useState(false);
   const [isOpenSignup, setIsOpenSignup] = useState(false);
-
+  useEffect(() => {
+    if (status === 'authenticated') {
+      setIsOpenLogin(false);
+      setIsOpenSignup(false);
+    }
+  }, [session, status]);
 
   return (
     <>
@@ -72,11 +78,12 @@ const MenuBar = () => {
 
               {status === 'authenticated' && (
                 <>
-                
+
                   <Link
                     href={`/users/${session.user?.name}`}
-                    className="block px-4 py-2 mt-2 text-sm text-gray-700 dark:text-white hover:bg-indigo-50 dark:hover:bg-gray-700 rounded-md transition duration-200"
+                    className="flex gap-2 items-center px-4 py-2 mt-2 text-sm text-gray-700 dark:text-white hover:bg-indigo-50 dark:hover:bg-gray-700 rounded-md transition duration-200"
                   >
+                    {session.user?.image && <Image src={session.user?.image} alt="User Image" width={30} height={30} className="rounded-full" />}
                     {session.user?.name}
                   </Link>
 
