@@ -89,7 +89,7 @@ const MenuBar = () => {
                   </Link>
 
                   <button onClick={() => signOut( { callbackUrl: '/', redirect: true } )}
-                    className="px-4 py-2 mt-2 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 transition duration-300"
+                    className="block w-full text-left px-4 py-2 mt-2 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 transition duration-300"
                   >
                     Sign Out
                   </button>
